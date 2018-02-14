@@ -5,7 +5,7 @@ package com.nothing.hunnaz.clustr.EventDB;
  */
 
 public class EventDBSchema {
-    public static final class AccountsTable {
+    public static final class EventsTable {
         /* All taken from TicTacToe then edited */
         public static final String NAME = "events";
 

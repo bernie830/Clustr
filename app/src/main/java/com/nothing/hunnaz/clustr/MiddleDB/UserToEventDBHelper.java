@@ -24,17 +24,17 @@ public final class UserToEventDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         
-        sqLiteDatabase.execSQL("CREATE TABLE " + UserToEventDBSchema.AccountsTable.NAME + "(" +
+        sqLiteDatabase.execSQL("CREATE TABLE " + UserToEventDBSchema.MidTable.NAME + "(" +
                 "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                UserToEventDBSchema.AccountsTable.Cols.USER_ID + " INTEGER, " +
-                UserToEventDBSchema.AccountsTable.Cols.EVENT_ID + " INTEGER" +
+                UserToEventDBSchema.MidTable.Cols.USER_ID + " INTEGER, " +
+                UserToEventDBSchema.MidTable.Cols.EVENT_ID + " INTEGER" +
                 ")");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         Log.w("Example", "Example: upgrading database; dropping and recreating tables.");
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + UserToEventDBSchema.AccountsTable.NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + UserToEventDBSchema.MidTable.NAME);
         onCreate(sqLiteDatabase);
     }
 }

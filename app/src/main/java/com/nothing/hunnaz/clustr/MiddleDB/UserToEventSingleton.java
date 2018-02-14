@@ -1,4 +1,4 @@
-package com.nothing.hunnaz.clustr.UserDB;
+package com.nothing.hunnaz.clustr.MiddleDB;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,31 +12,30 @@ import java.util.List;
 /**
  * Created by hunterbernhardt on 2/9/18.
  */
-public class UserSingleton {
-    private static UserSingleton user;
+public class UserToEventSingleton {
+    private static UserToEventSingleton mid;
 
-    private UserDBHelper userDBHelper;
+    private UserToEventDBHelper userDBHelper;
     private SQLiteDatabase database;
 
-    private static final String INSERT_STMT = "INSERT INTO " + UserDBSchema.AccountsTable.NAME + " (name, password, birth_date) VALUES (?, ?, ?)" ;
+    private static final String INSERT_STMT = "INSERT INTO " + UserToEventDBSchema.MidTable.NAME + " (name, password) VALUES (?, ?)" ;
 
-    public static UserSingleton get(Context context) {
-        if (user == null) {
-            user = new UserSingleton(context);
+    public static UserToEventSingleton get(Context context) {
+        if (mid == null) {
+            mid = new UserToEventSingleton(context);
         }
-        return user;
+        return mid;
     }
 
-    private UserSingleton(Context context) {
-        userDBHelper = new UserDBHelper(context.getApplicationContext());
+    private UserToEventSingleton(Context context) {
+        userDBHelper = new UserToEventDBHelper(context.getApplicationContext());
         database = userDBHelper.getWritableDatabase();
     }
 
-    private static ContentValues getContentValues(User account) {
+    private static ContentValues getContentValues(UserToEvent mid) {
         ContentValues values = new ContentValues();
-        values.put(UserDBSchema.AccountsTable.Cols.USERNAME, account.getName());
-        values.put(UserDBSchema.AccountsTable.Cols.PASSWORD, account.getPassword());
-        values.put(UserDBSchema.AccountsTable.Cols.DATE_OF_BIRTH, account.getDateOfBirth());
+        values.put(UserToEventDBSchema.MidTable.Cols.USER_ID, mid.getUserID());
+        values.put(UserToEventDBSchema.MidTable.Cols.EVENT_ID, mid.getEventID());
 
         return values;
     }
@@ -45,17 +44,16 @@ public class UserSingleton {
      * Add a new user Account to the database. This DB logic uses code from Jake Wharton:
      * http://jakewharton.com/kotlin-is-here/ (slide 61). It's much easier in Kotlin!
      *
-     * @param account
+     * @param mid
      */
-    public void addAccount(User account) {
-        ContentValues contentValues = getContentValues(account);
+    public void addMiddle(UserToEvent mid) {
+        ContentValues contentValues = getContentValues(mid);
 
         database.beginTransaction();
         try {
             SQLiteStatement statement = database.compileStatement(INSERT_STMT);
-            statement.bindString(1, account.getName());
-            statement.bindString(2, account.getPassword());
-            statement.bindString(3, account.getDateOfBirth());
+            statement.bindLong(1, mid.getUserID());
+            statement.bindLong(2, mid.getEventID());
             statement.executeInsert();
             database.setTransactionSuccessful();
         } finally {
@@ -67,19 +65,19 @@ public class UserSingleton {
      * Delete all user accounts from the database. This DB logic uses code from Jake Wharton:
      * http://jakewharton.com/kotlin-is-here/ (slide 61). It's much easier in Kotlin!
      */
-    public void deleteAllAccounts() {
+    public void deleteAllMiddles() {
         database.beginTransaction();
         try {
-            database.delete(UserDBSchema.AccountsTable.NAME,null, null);
+            database.delete(UserToEventDBSchema.MidTable.NAME,null, null);
             database.setTransactionSuccessful();
         } finally {
             database.endTransaction();
         }
     }
 
-    private UserCursorWrapper queryAccounts(String whereClause, String[] whereArgs) {
+    private UserToEventCursorWrapper queryMiddles(String whereClause, String[] whereArgs) {
         Cursor cursor = database.query(
-                UserDBSchema.AccountsTable.NAME,
+                UserToEventDBSchema.MidTable.NAME,
                 null, // columns; null selects all columns
                 whereClause,
                 whereArgs,
@@ -88,17 +86,17 @@ public class UserSingleton {
                 null // ORDER BY
         );
 
-        return new UserCursorWrapper(cursor);
+        return new UserToEventCursorWrapper(cursor);
     }
 
-    public List<User> getAccounts() {
-        List<User> accountList = new ArrayList<>();
-        UserCursorWrapper cursor = queryAccounts(null, null);
+    public List<UserToEvent> getMiddles() {
+        List<UserToEvent> accountList = new ArrayList<>();
+        UserToEventCursorWrapper cursor = queryMiddles(null, null);
 
         try {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                accountList.add(cursor.getAccount());
+                accountList.add(cursor.getMid());
                 cursor.moveToNext();
             }
         } finally {

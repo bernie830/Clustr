@@ -24,23 +24,23 @@ public final class EventDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
-        sqLiteDatabase.execSQL("CREATE TABLE " + EventDBSchema.AccountsTable.NAME + "(" +
+        sqLiteDatabase.execSQL("CREATE TABLE " + EventDBSchema.EventsTable.NAME + "(" +
                 "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                EventDBSchema.AccountsTable.Cols.TITLE + " TEXT, " +
-                EventDBSchema.AccountsTable.Cols.LOCATION + " TEXT," +
-                EventDBSchema.AccountsTable.Cols.CAPACITY + " INTEGER, " +
-                EventDBSchema.AccountsTable.Cols.DATE + " TEXT," +
-                EventDBSchema.AccountsTable.Cols.DESCRIPTION + " TEXT, " +
-                EventDBSchema.AccountsTable.Cols.COST + " REAL," +
-                EventDBSchema.AccountsTable.Cols.AGE + " INTEGER," +
-                EventDBSchema.AccountsTable.Cols.CREATOR + " INTEGER" +
+                EventDBSchema.EventsTable.Cols.TITLE + " TEXT, " +
+                EventDBSchema.EventsTable.Cols.LOCATION + " TEXT," +
+                EventDBSchema.EventsTable.Cols.CAPACITY + " INTEGER, " +
+                EventDBSchema.EventsTable.Cols.DATE + " TEXT," +
+                EventDBSchema.EventsTable.Cols.DESCRIPTION + " TEXT, " +
+                EventDBSchema.EventsTable.Cols.COST + " REAL," +
+                EventDBSchema.EventsTable.Cols.AGE + " INTEGER," +
+                EventDBSchema.EventsTable.Cols.CREATOR + " INTEGER" +
                 ")");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         Log.w("Example", "Example: upgrading database; dropping and recreating tables.");
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + EventDBSchema.AccountsTable.NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + EventDBSchema.EventsTable.NAME);
         onCreate(sqLiteDatabase);
     }
 }
