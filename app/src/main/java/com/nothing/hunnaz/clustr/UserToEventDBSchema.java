@@ -1,4 +1,4 @@
-package com.example.hunterbernhardt.myapplication;
+package com.nothing.hunnaz.clustr;
 
 /**
  * Created by hunterbernhardt on 2/9/18.

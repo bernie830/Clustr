@@ -1,11 +1,11 @@
-package com.example.hunterbernhardt.myapplication;
+package com.nothing.hunnaz.clustr;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.hunterbernhardt.myapplication.UserDBSchema.AccountsTable;
+import com.nothing.hunnaz.clustr.UserDBSchema.AccountsTable;
 
 /**
  * Created by hunterbernhardt on 2/9/18.
