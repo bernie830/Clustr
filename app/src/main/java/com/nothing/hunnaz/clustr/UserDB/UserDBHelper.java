@@ -1,11 +1,9 @@
-package com.nothing.hunnaz.clustr;
+package com.nothing.hunnaz.clustr.UserDB;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
-import com.nothing.hunnaz.clustr.UserDBSchema.AccountsTable;
 
 /**
  * Created by hunterbernhardt on 2/9/18.
@@ -25,18 +23,18 @@ public final class UserDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL("CREATE TABLE " + AccountsTable.NAME + "(" +
+        sqLiteDatabase.execSQL("CREATE TABLE " + UserDBSchema.AccountsTable.NAME + "(" +
                 "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                AccountsTable.Cols.USERNAME + " TEXT, " +
-                AccountsTable.Cols.PASSWORD + " TEXT," +
-                AccountsTable.Cols.DATE_OF_BIRTH + " TEXT" +
+                UserDBSchema.AccountsTable.Cols.USERNAME + " TEXT, " +
+                UserDBSchema.AccountsTable.Cols.PASSWORD + " TEXT," +
+                UserDBSchema.AccountsTable.Cols.DATE_OF_BIRTH + " TEXT" +
                 ")");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         Log.w("Example", "Example: upgrading database; dropping and recreating tables.");
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + AccountsTable.NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + UserDBSchema.AccountsTable.NAME);
         onCreate(sqLiteDatabase);
     }
 }

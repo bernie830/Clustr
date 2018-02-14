@@ -1,11 +1,10 @@
-package com.nothing.hunnaz.clustr;
+package com.nothing.hunnaz.clustr.UserDB;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
-import com.nothing.hunnaz.clustr.UserDBSchema.AccountsTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ public class UserSingleton {
     private UserDBHelper userDBHelper;
     private SQLiteDatabase database;
 
-    private static final String INSERT_STMT = "INSERT INTO " + AccountsTable.NAME + " (name, password) VALUES (?, ?)" ;
+    private static final String INSERT_STMT = "INSERT INTO " + UserDBSchema.AccountsTable.NAME + " (name, password) VALUES (?, ?)" ;
 
     public static UserSingleton get(Context context) {
         if (user == null) {
@@ -35,9 +34,9 @@ public class UserSingleton {
 
     private static ContentValues getContentValues(User account) {
         ContentValues values = new ContentValues();
-        values.put(AccountsTable.Cols.USERNAME, account.getName());
-        values.put(AccountsTable.Cols.PASSWORD, account.getPassword());
-        values.put(AccountsTable.Cols.DATE_OF_BIRTH, account.getDateOfBirth());
+        values.put(UserDBSchema.AccountsTable.Cols.USERNAME, account.getName());
+        values.put(UserDBSchema.AccountsTable.Cols.PASSWORD, account.getPassword());
+        values.put(UserDBSchema.AccountsTable.Cols.DATE_OF_BIRTH, account.getDateOfBirth());
 
         return values;
     }
@@ -71,7 +70,7 @@ public class UserSingleton {
     public void deleteAllAccounts() {
         database.beginTransaction();
         try {
-            database.delete(AccountsTable.NAME,null, null);
+            database.delete(UserDBSchema.AccountsTable.NAME,null, null);
             database.setTransactionSuccessful();
         } finally {
             database.endTransaction();
@@ -80,7 +79,7 @@ public class UserSingleton {
 
     private UserCursorWrapper queryAccounts(String whereClause, String[] whereArgs) {
         Cursor cursor = database.query(
-                AccountsTable.NAME,
+                UserDBSchema.AccountsTable.NAME,
                 null, // columns; null selects all columns
                 whereClause,
                 whereArgs,

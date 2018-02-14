@@ -1,4 +1,4 @@
-package com.nothing.hunnaz.clustr;
+package com.nothing.hunnaz.clustr.MiddleDB;
 
 /**
  * Created by hunterbernhardt on 2/9/18.

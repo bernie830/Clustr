@@ -1,11 +1,4 @@
-package com.nothing.hunnaz.clustr;
-
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
-
-import com.nothing.hunnaz.clustr.UserDBSchema.AccountsTable;
+package com.nothing.hunnaz.clustr.UserDB;
 
 /**
  * Created by hunterbernhardt on 2/9/18.

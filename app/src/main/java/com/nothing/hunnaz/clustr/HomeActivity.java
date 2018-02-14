@@ -2,11 +2,12 @@ package com.nothing.hunnaz.clustr;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
+
+import com.nothing.hunnaz.clustr.UserDB.User;
+import com.nothing.hunnaz.clustr.UserDB.UserSingleton;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
     private EditText usernameTextEntry;

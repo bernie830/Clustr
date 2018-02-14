@@ -1,4 +1,4 @@
-package com.nothing.hunnaz.clustr;
+package com.nothing.hunnaz.clustr.UserDB;
 
 /**
  * Created by hunterbernhardt on 2/9/18.
