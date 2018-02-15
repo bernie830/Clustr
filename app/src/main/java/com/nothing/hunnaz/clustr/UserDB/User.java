@@ -8,8 +8,8 @@ public class User {
     private String pass;
     private String birthDate;
 
-    public User(String name, String password, String dateOfBirth) {
-        name = name;
+    public User(String username, String password, String dateOfBirth) {
+        name = username;
         pass = password;
         birthDate = dateOfBirth;
     }

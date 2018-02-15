@@ -107,5 +107,4 @@ public class UserSingleton {
 
         return accountList;
     }
-
 }

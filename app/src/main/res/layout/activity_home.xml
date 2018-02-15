@@ -62,10 +62,26 @@
         android:layout_marginEnd="178dp"
         android:layout_marginStart="118dp"
         android:layout_marginTop="125dp"
+        android:onClick="onClick"
         android:text="Done"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dateOfBirth" />
+
+    <Button
+        android:id="@+id/checkButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:layout_marginEnd="178dp"
+        android:layout_marginStart="118dp"
+        android:layout_marginTop="13dp"
+        android:onClick="onClick"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/doneButton" />
 
 </android.support.constraint.ConstraintLayout>
