@@ -31,16 +31,6 @@
             android:inputType="textPersonName"
             android:text="Username" />
 
-        <EditText
-            android:id="@+id/password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="32dp"
-            android:layout_below="@id/userName"
-            android:inputType="textPersonName"
-            android:text="Password" />
-
         <Button
             android:id="@+id/doneButton"
             android:layout_width="wrap_content"
@@ -61,6 +51,16 @@
             android:layout_centerHorizontal="true"
             android:onClick="onClick"
             android:text="Register a New Account" />
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="32dp"
+            android:layout_below="@id/userName"
+            android:inputType="textPassword"
+            android:text="Password" />
 
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

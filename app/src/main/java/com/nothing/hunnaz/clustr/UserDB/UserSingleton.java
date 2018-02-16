@@ -91,7 +91,7 @@ public class UserSingleton {
         return new UserCursorWrapper(cursor);
     }
 
-    public List<User> getAccounts() {
+    private List<User> getAllAccounts(){
         List<User> accountList = new ArrayList<>();
         UserCursorWrapper cursor = queryAccounts(null, null);
 
@@ -106,5 +106,20 @@ public class UserSingleton {
         }
 
         return accountList;
+    }
+
+    public boolean isRegistered(String username){
+        List<User> accounts = getAllAccounts();
+        boolean returnVal = false;
+        for(User u : accounts){
+            if(u.getName().equals(username)){
+                returnVal = true;
+            }
+        }
+        return returnVal;
+    }
+
+    public List<User> getAccounts() {
+        return getAllAccounts();
     }
 }
