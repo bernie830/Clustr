@@ -15,7 +15,6 @@ import java.util.List;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
     private EditText usernameTextEntry;
     private EditText passwordTextEntry;
-    private EditText dobTextEntry;
     private Intent nextScreen;
 
     @Override
@@ -24,20 +23,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
     }
 
-    private void checkLogin(){
-        String username = usernameTextEntry.getText().toString();
-        String password = usernameTextEntry.getText().toString();
-        String date = usernameTextEntry.getText().toString();
+    // Return an error message if there is one
+    private String attemptLogin(){
+        boolean validLogin = true;
+        String retVal = "";
+        if(validLogin) {
+            startActivity(nextScreen);
+        } else {
+            retVal = "There was an error in login";
+        }
+
+        return retVal;
     }
 
-    private void addUser(){
-        String username = usernameTextEntry.getText().toString();
-        String password = passwordTextEntry.getText().toString();
-        String date = dobTextEntry.getText().toString();
-
-        UserSingleton singleton = UserSingleton.get(this.getApplicationContext());
-        User account = new User(username, password, date);
-        singleton.addAccount(account);
+    private void changeToRegister(){
+        nextScreen = new Intent(this, RegisterActivity.class);
         startActivity(nextScreen);
     }
 
@@ -55,17 +55,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         ViewGroup v = (ViewGroup) view.getParent();
         usernameTextEntry = (EditText) v.findViewById(R.id.userName);
         passwordTextEntry = (EditText) v.findViewById(R.id.password);
-        dobTextEntry = (EditText) v.findViewById(R.id.dateOfBirth);
 
         //Because from here we only ever want to return to the home screen
         nextScreen = new Intent(this, HomeActivity.class);
 
         switch (view.getId()) {
             case R.id.doneButton:
-                addUser();
+                attemptLogin();
                 break;
-            case R.id.checkButton:
-                displayUser();
+            case R.id.registerButton:
+                changeToRegister();
                 break;
             case R.id.backButton:
                 returnToHome();
