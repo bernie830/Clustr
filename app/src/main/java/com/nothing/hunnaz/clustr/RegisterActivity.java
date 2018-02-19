@@ -74,12 +74,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             User account = new User(username, password, date);
             singleton.addAccount(account);
 
-            // Set the user to logged in
-            SharedPreferences settings = getPreferences(0);
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean("isLoggedIn", true);
-            editor.putString("username", username);
-            editor.commit();
+//            // Set the user to logged in
+//            SharedPreferences settings = getPreferences(0);
+//            SharedPreferences.Editor editor = settings.edit();
+//            editor.putBoolean("isLoggedIn", true);
+//            editor.putString("username", username);
+//            editor.commit();
+
+            UserPrefs.logInUser(username, this);
 
             // Go onto the next screen
             startActivity(nextScreen);

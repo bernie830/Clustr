@@ -26,8 +26,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="128dp"
+            android:layout_below="@+id/loginInfo"
+            android:layout_marginTop="16dp"
             android:inputType="textPersonName"
             android:hint="Enter a Username" />
 
@@ -61,6 +61,15 @@
             android:layout_below="@id/userName"
             android:inputType="textPassword"
             android:hint="Enter a Password" />
+
+        <TextView
+            android:id="@+id/loginInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="64dp"
+            android:text="Please enter your login information" />
 
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

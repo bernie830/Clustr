@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.content.SharedPreferences;
+import android.widget.TextView;
 
 import com.nothing.hunnaz.clustr.UserDB.User;
 import com.nothing.hunnaz.clustr.UserDB.UserSingleton;
@@ -16,6 +17,7 @@ import java.util.List;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
     private EditText usernameTextEntry;
     private EditText passwordTextEntry;
+    private TextView informationText;
     private Intent nextScreen;
 
     @Override
@@ -34,7 +36,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             UserPrefs.logInUser(username, this);
             startActivity(nextScreen);
         } else {
-            retVal = "There was an error in login";
+            retVal = "The entered information was invalid. Please try again.";
         }
         return retVal;
     }
@@ -53,13 +55,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         ViewGroup v = (ViewGroup) view.getParent();
         usernameTextEntry = (EditText) v.findViewById(R.id.userName);
         passwordTextEntry = (EditText) v.findViewById(R.id.password);
+        informationText = (TextView) v.findViewById(R.id.loginInfo);
 
         //Because from here we only ever want to return to the home screen
         nextScreen = new Intent(this, HomeActivity.class);
 
         switch (view.getId()) {
             case R.id.doneButton:
-                attemptLogin(usernameTextEntry.getText().toString(), passwordTextEntry.getText().toString());
+                String newInfo = attemptLogin(usernameTextEntry.getText().toString(), passwordTextEntry.getText().toString());
+                if(newInfo.length() != 0) {
+                    informationText.setText(newInfo);
+                }
                 break;
             case R.id.registerButton:
                 changeToRegister();
