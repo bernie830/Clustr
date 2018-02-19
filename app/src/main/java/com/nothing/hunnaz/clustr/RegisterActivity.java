@@ -1,6 +1,7 @@
 package com.nothing.hunnaz.clustr;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -60,17 +61,27 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             currentError = "The username entered is not a valid username. Please enter another.";
         }
 
-        if(currentError.length() == 0 && confirmPassword(password, passwordConfirm)){
+        if(currentError.length() == 0 && !confirmPassword(password, passwordConfirm)){
             currentError = "The password entered is either invalid or does not match the confirmation password. Please enter another.";
         }
 
-        if(currentError.length() == 0 && confirmDOB(date)){
+        if(currentError.length() == 0 && !confirmDOB(date)){
             currentError = "The date of birth entered is not a valid. Please enter another.";
         }
 
         if(currentError.length() == 0) {
+            // Add the account to the db
             User account = new User(username, password, date);
             singleton.addAccount(account);
+
+            // Set the user to logged in
+            SharedPreferences settings = getPreferences(0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean("isLoggedIn", true);
+            editor.putString("username", username);
+            editor.commit();
+
+            // Go onto the next screen
             startActivity(nextScreen);
         }
         return currentError;

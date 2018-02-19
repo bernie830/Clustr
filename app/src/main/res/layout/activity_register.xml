@@ -37,7 +37,8 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="96dp"
-            android:text="Username" />
+            android:hint="Enter a Username"
+            />
 
         <EditText
             android:id="@+id/passwordRegister"
@@ -47,7 +48,7 @@
             android:layout_marginTop="32dp"
             android:layout_below="@id/userNameRegister"
             android:inputType="textPassword"
-            android:text="Password" />
+            android:hint="Enter a Password" />
 
         <EditText
             android:id="@+id/passwordRegisterConfirm"
@@ -57,7 +58,7 @@
             android:layout_marginTop="32dp"
             android:layout_below="@id/passwordRegister"
             android:inputType="textPassword"
-            android:text="Password" />
+            android:hint="Confirm Your Password" />
 
         <EditText
             android:id="@+id/dateOfBirthRegister"
@@ -67,7 +68,7 @@
             android:layout_marginTop="32dp"
             android:layout_below="@id/passwordRegisterConfirm"
             android:inputType="date"
-            android:text="Date of Birth" />
+            android:hint="Enter Your Date of Birth" />
 
         <Button
             android:id="@+id/doneRegisterButton"

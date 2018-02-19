@@ -119,6 +119,17 @@ public class UserSingleton {
         return returnVal;
     }
 
+    public boolean isValidLogin(String username, String password) {
+        List<User> accounts = getAllAccounts();
+        boolean returnVal = false;
+        for(User u : accounts){
+            if(u.getName().equals(username) && u.getPassword().equals(password)){
+                returnVal = true;
+            }
+        }
+        return returnVal;
+    }
+
     public List<User> getAccounts() {
         return getAllAccounts();
     }
