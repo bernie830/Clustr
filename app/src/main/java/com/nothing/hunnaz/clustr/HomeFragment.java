@@ -53,7 +53,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
         isLoggedIn = UserPrefs.isLoggedIn(this.getContext());
         if(isLoggedIn){
-            Button loginButton = (Button) this.getActivity().findViewById(R.id.loginButton);
+            Button loginButton = (Button) v.findViewById(R.id.loginButton);
             String accountText = "Account Home";
             loginButton.setText(accountText);
         }
