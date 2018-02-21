@@ -63,34 +63,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         return returnVal;
     }
 
-    private static boolean confirmDOB(String date){
-        boolean returnVal = true;
-        int slash = date.indexOf("/");
-        String month = "";
-        String day = "";
-        String year = "";
-        if(slash > -1) {
-            month = date.substring(0, slash);
-            String rest = date.substring(slash + 1);
-            slash = rest.indexOf("/");
-            if(slash > -1) {
-                day = rest.substring(0, slash);
-                year = rest.substring(slash + 1);
-            } else {
-                returnVal = false;
-            }
-        } else {
-            returnVal = false;
-        }
-
-        if(returnVal){
-            Date dob = new Date(month, day, year);
-            returnVal = dob.confirmDate();
-        }
-
-        return returnVal;
-    }
-
     private String registerUser(){
         String username = usernameTextEntry.getText().toString();
         String password = passwordTextEntry.getText().toString();
@@ -161,5 +133,15 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                 changeToLogin();
                 break;
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
     }
 }
