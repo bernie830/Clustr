@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,18 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
 
     private void returnToHome(){
         startActivity(nextScreen);
+    }
+
+    @Override
+    public void onPause() {
+        Log.d(getClass().getSimpleName(), "Entering onPause");
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        Log.d(getClass().getSimpleName(), "Entering onResume");
+        super.onResume();
     }
 
     @Override
