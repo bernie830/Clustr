@@ -6,42 +6,43 @@ package com.nothing.hunnaz.clustr;
 
 public class Date {
 
-    private String month;
-    private String day;
-    private String year;
+    private int month;
+    private int day;
+    private int year;
+    private boolean validDate = false;
 
-    private boolean confirmMonth() {
+    private static int getMonthNum(String month) {
         int monthVal = 0;
         // If possible, convert it to an integer
-        for(int i = 0; i < this.month.length(); i++){
-            if(Character.isDigit(this.month.charAt(i)) && monthVal >= 0){
-                monthVal = (monthVal * 10) + Character.digit(this.month.charAt(i), 10);
+        for(int i = 0; i < month.length(); i++){
+            if(Character.isDigit(month.charAt(i)) && monthVal >= 0){
+                monthVal = (monthVal * 10) + Character.digit(month.charAt(i), 10);
             } else {
                 monthVal = -1;
             }
         }
-        return (monthVal > 0 && monthVal < 13);
+        return monthVal;
     }
 
-    private boolean confirmDay() {
+    private static int getDayNum(String day) {
         int dayVal = 0;
         // If possible, convert it to an integer
-        for(int i = 0; i < this.day.length(); i++){
-            if(Character.isDigit(this.day.charAt(i)) && dayVal >= 0){
-                dayVal = (dayVal * 10) + Character.digit(this.day.charAt(i), 10);
+        for(int i = 0; i < day.length(); i++){
+            if(Character.isDigit(day.charAt(i)) && dayVal >= 0){
+                dayVal = (dayVal * 10) + Character.digit(day.charAt(i), 10);
             } else {
                 dayVal = -1;
             }
         }
-        return (dayVal > 0 && dayVal < 32);
+        return dayVal;
     }
 
-    private boolean confirmYear() {
+    private static int getYearNum(String year) {
         int yearVal = 0;
         // If possible, convert it to an integer
-        for(int i = 0; i < this.year.length(); i++){
-            if(Character.isDigit(this.year.charAt(i)) && yearVal >= 0){
-                yearVal = (yearVal * 10) + Character.digit(this.year.charAt(i), 10);
+        for(int i = 0; i < year.length(); i++){
+            if(Character.isDigit(year.charAt(i)) && yearVal >= 0){
+                yearVal = (yearVal * 10) + Character.digit(year.charAt(i), 10);
             } else {
                 yearVal = -1;
             }
@@ -49,39 +50,62 @@ public class Date {
         if(yearVal < 100){
             yearVal += 1900;
         }
-        return (yearVal > 1900 && yearVal < 2018);
+        return yearVal;
     }
 
-    public boolean confirmDate() {
-        boolean returnVal = confirmMonth() && confirmDay() && confirmYear();
+    private boolean validateDate(){
+        boolean monthValid = (this.month > 0 && this.month < 13);
+        boolean dayValid = (this.day > 0 && this.day < 32);
+        boolean yearValid = (this.year > 1900 && this.year < 2018);
 
+        return monthValid && dayValid && yearValid;
+    }
+
+    public String toString(){
+        String returnVal = "";
+        if(this.validDate){
+            returnVal = this.month + "/" + this.day + "/" + this.year;
+        }
         return returnVal;
     }
 
+    public boolean confirmDate() {
+        return this.validDate;
+    }
+
     public Date (String monthStr, String dayStr, String yearStr){
-        this.month = monthStr;
-        this.day = dayStr;
-        this.year = yearStr;
+        this.month = getMonthNum(monthStr);
+        this.day = getDayNum(dayStr);
+        this.year = getYearNum(yearStr);
     }
 
     public Date(String date){
+        String monthStr = "";
+        String dayStr = "";
+        String yearStr = "";
         int slash = date.indexOf("/");
         if(slash > -1) {
-            this.month = date.substring(0, slash);
+            monthStr = date.substring(0, slash);
             String rest = date.substring(slash + 1);
             slash = rest.indexOf("/");
             if(slash > -1) {
-                this.day = rest.substring(0, slash);
-                this.year = rest.substring(slash + 1);
+                dayStr = rest.substring(0, slash);
+                yearStr = rest.substring(slash + 1);
             } else {
-                this.month = "";
-                this.day = "";
-                this.year = "";
+                monthStr = "";
+                dayStr = "";
+                yearStr = "";
             }
         } else {
-            this.month = "";
-            this.day = "";
-            this.year = "";
+            monthStr = "";
+            dayStr = "";
+            yearStr = "";
         }
+
+        this.month = getMonthNum(monthStr);
+        this.day = getDayNum(dayStr);
+        this.year = getYearNum(yearStr);
+
+        this.validDate = validateDate();
     }
 }
