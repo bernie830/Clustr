@@ -59,8 +59,29 @@ public class Date {
     }
 
     public Date (String monthStr, String dayStr, String yearStr){
-        month = monthStr;
-        day = dayStr;
-        year = yearStr;
+        this.month = monthStr;
+        this.day = dayStr;
+        this.year = yearStr;
+    }
+
+    public Date(String date){
+        int slash = date.indexOf("/");
+        if(slash > -1) {
+            this.month = date.substring(0, slash);
+            String rest = date.substring(slash + 1);
+            slash = rest.indexOf("/");
+            if(slash > -1) {
+                this.day = rest.substring(0, slash);
+                this.year = rest.substring(slash + 1);
+            } else {
+                this.month = "";
+                this.day = "";
+                this.year = "";
+            }
+        } else {
+            this.month = "";
+            this.day = "";
+            this.year = "";
+        }
     }
 }

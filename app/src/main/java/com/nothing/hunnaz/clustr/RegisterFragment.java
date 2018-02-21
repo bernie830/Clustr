@@ -107,7 +107,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
             currentError = "The password entered is either invalid or does not match the confirmation password. Please enter another.";
         }
 
-        if(currentError.length() == 0 && !confirmDOB(date)){
+        Date dob = new Date(date);
+
+        if(currentError.length() == 0 && !dob.confirmDate()){
             currentError = "The date of birth entered is not a valid. Please enter another.";
         }
 
