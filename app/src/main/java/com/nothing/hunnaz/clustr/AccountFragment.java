@@ -24,17 +24,29 @@ import android.widget.Toast;
 public class AccountFragment extends Fragment implements View.OnClickListener {
     private void logoutUser(){
         UserPrefs.logOutUser(super.getContext());
-        Intent myIntent = new Intent(super.getContext(), HomeActivity.class);
-        startActivity(myIntent);
+        returnToHome();
+    }
+
+    private void returnToHome(){
+        Intent nextScreen = new Intent(this.getContext(), HomeActivity.class);
+        startActivity(nextScreen);
+    }
+
+    private void changePass(){
+
     }
 
     @Override
     public void onClick(View view) {
-        ViewGroup v = (ViewGroup) view.getParent();
-
         switch (view.getId()) {
             case R.id.logoutButton:
                 logoutUser();
+                break;
+            case R.id.backButton:
+                returnToHome();
+                break;
+            case R.id.changePasswordButton:
+                changePass();
                 break;
         }
     }
@@ -52,6 +64,12 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
 
         Button btnAdd = (Button) v.findViewById(R.id.logoutButton);
+        btnAdd.setOnClickListener(this);
+
+        btnAdd = (Button) v.findViewById(R.id.backButton);
+        btnAdd.setOnClickListener(this);
+
+        btnAdd = (Button) v.findViewById(R.id.changePasswordButton);
         btnAdd.setOnClickListener(this);
 
         return v;
