@@ -38,10 +38,9 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         View v = inflater.inflate(R.layout.fragment_item, container, false);
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
 
+
         FloatingActionButton exit = (FloatingActionButton) v.findViewById(R.id.exitFab);
         exit.setOnClickListener(this);
-
-        //v.getBackground().setAlpha(225);
 
         return v;
     }
