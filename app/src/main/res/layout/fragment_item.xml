@@ -18,23 +18,65 @@
 
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/darker_gray"
-    android:layout_marginRight="16dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginLeft="16dp"
-    android:layout_marginStart="16dp"
-    android:layout_marginTop="16dp"
-    android:layout_marginBottom="16dp">
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/darker_gray"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp">
 
-    <TextView
-        android:id="@+id/loginInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:text="Hello World"
-        android:layout_gravity="center"/>
-</LinearLayout>
+        <TextView
+            android:id="@+id/eventName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:textSize="12pt"
+            android:text="Test Event" />
+
+        <TextView
+            android:id="@+id/eventDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="6dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginStart="12dp"
+
+            android:layout_marginRight="12dp"
+            android:layout_marginEnd="12dp"
+            android:textSize="6pt"
+            android:text="This is a description of a very cool event. 10/10 would recommend. We will be watching paint dry. Cool kids only." />
+
+        <TextView
+            android:id="@+id/eventDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="6dp"
+            android:textSize="6pt"
+            android:text="Date: 11/11/11" />
+
+        <TextView
+            android:id="@+id/eventCost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="6dp"
+            android:textSize="6pt"
+            android:text="Cost: $2.10" />
+
+        <TextView
+            android:id="@+id/eventAge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="6dp"
+            android:textSize="6pt"
+            android:text="Age Required to Attend: 12" />
+    </LinearLayout>
 </RelativeLayout>

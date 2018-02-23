@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="onClick"
-            android:text="Show Info" />
+            android:text="Fake Event Button" />
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
@@ -38,7 +38,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:tint="@android:color/holo_blue_light"
-        app:backgroundTint="@android:color/darker_gray"
+        app:backgroundTint="@android:color/black"
         app:srcCompat="@android:drawable/ic_input_add" />
 
 </RelativeLayout>
