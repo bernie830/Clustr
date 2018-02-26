@@ -6,12 +6,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
+import java.util.List;
 
 
 /**
@@ -19,13 +21,8 @@ import android.support.v4.app.FragmentTransaction;
  */
 public class ListFragment extends Fragment implements View.OnClickListener{
 
-    private void switchToAccount(){
-        Intent myIntent = new Intent(this.getContext(), AccountActivity.class);
-        startActivity(myIntent);
-    }
-
-    private void switchToLogin(){
-        Intent myIntent = new Intent(this.getContext(), LoginActivity.class);
+    private void switchIntent(Class name){
+        Intent myIntent = new Intent(this.getContext(), name);
         startActivity(myIntent);
     }
 
@@ -43,7 +40,7 @@ public class ListFragment extends Fragment implements View.OnClickListener{
         ViewGroup v = (ViewGroup) view.getParent();
         switch (view.getId()) {
             case R.id.accountButton:
-                switchToAccount();
+                switchIntent(AccountActivity.class);
                 break;
             case R.id.testShow:
                 showItem();
@@ -55,10 +52,14 @@ public class ListFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if(!UserPrefs.isLoggedIn(this.getContext())){
-            switchToLogin();
+            switchIntent(LoginActivity.class);
         }
         View v = inflater.inflate(R.layout.fragment_list, container, false);
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
+
+        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
+            switchIntent(ListActivity.class); // Change this to the landscape version
+        }
 
         Button btnAdd = (Button) v.findViewById(R.id.accountButton);
         btnAdd.setOnClickListener(this);

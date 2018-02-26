@@ -24,12 +24,12 @@ import android.widget.Toast;
 public class AccountFragment extends Fragment implements View.OnClickListener {
     private void logoutUser(){
         UserPrefs.logOutUser(super.getContext());
-        returnToHome();
+        switchIntent(HomeActivity.class);
     }
 
-    private void returnToHome(){
-        Intent nextScreen = new Intent(this.getContext(), HomeActivity.class);
-        startActivity(nextScreen);
+    private void switchIntent(Class name){
+        Intent myIntent = new Intent(this.getContext(), name);
+        startActivity(myIntent);
     }
 
     private void changePass(){
@@ -43,7 +43,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                 logoutUser();
                 break;
             case R.id.backButton:
-                returnToHome();
+                switchIntent(HomeActivity.class);
                 break;
             case R.id.changePasswordButton:
                 changePass();
@@ -62,6 +62,10 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_account, container, false);
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
+
+        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
+            switchIntent(AccountActivity.class); // Change this to the landscape version
+        }
 
         Button btnAdd = (Button) v.findViewById(R.id.logoutButton);
         btnAdd.setOnClickListener(this);

@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -24,7 +25,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     private EditText passwordTextEntry;
     private EditText passwordConfirmTextEntry;
     private EditText dobTextEntry;
-    private Intent nextScreen;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,6 +32,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         View v = inflater.inflate(R.layout.fragment_register, container, false);
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
 
+        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
+            switchIntent(RegisterActivity.class); // Change this to the landscape version
+        }
 
         // Not really lol
         Button btnAdd = (Button) v.findViewById(R.id.backButtonRegister);
@@ -92,19 +95,14 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
             UserPrefs.logInUser(username, this.getActivity());
 
-            // Go onto the next screen
-            startActivity(nextScreen);
+            switchIntent(ListActivity.class);
         }
         return currentError;
     }
 
-    private void returnToHome(){
-        startActivity(nextScreen);
-    }
-
-    private void changeToLogin(){
-        nextScreen = new Intent(this.getContext(), LoginActivity.class);
-        startActivity(nextScreen);
+    private void switchIntent(Class name){
+        Intent myIntent = new Intent(this.getContext(), name);
+        startActivity(myIntent);
     }
 
     @Override
@@ -116,12 +114,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         dobTextEntry = (EditText) v.findViewById(R.id.dateOfBirthRegister);
         TextView errorMessageText = (TextView) v.findViewById(R.id.errorMessage);
 
-        //Because from here we only ever want to return to the home screen
-        nextScreen = new Intent(this.getContext(), HomeActivity.class);
-
         switch (view.getId()) {
             case R.id.backButtonRegister:
-                returnToHome();
+                switchIntent(HomeActivity.class);
                 break;
             case R.id.doneRegisterButton:
                 String error = registerUser();
@@ -130,7 +125,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.currentUserButton:
-                changeToLogin();
+                switchIntent(LoginActivity.class);
                 break;
         }
     }

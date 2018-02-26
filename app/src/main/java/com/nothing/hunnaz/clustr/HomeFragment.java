@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -16,14 +17,8 @@ import android.widget.Button;
  */
 public class HomeFragment extends Fragment implements View.OnClickListener{
 
-
-    private void switchToLogin(){
-        Intent myIntent = new Intent(this.getContext(), LoginActivity.class);
-        startActivity(myIntent);
-    }
-
-    private void switchToList(){
-        Intent myIntent = new Intent(this.getContext(), ListActivity.class);
+    private void switchIntent(Class name){
+        Intent myIntent = new Intent(this.getContext(), name);
         startActivity(myIntent);
     }
 
@@ -32,7 +27,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         ViewGroup v = (ViewGroup) view.getParent();
         switch (view.getId()) {
             case R.id.loginButton:
-                switchToLogin();
+                switchIntent(LoginActivity.class);
                 break;
         }
     }
@@ -43,10 +38,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                              Bundle savedInstanceState) {
 
         if(UserPrefs.isLoggedIn(this.getContext())){
-            switchToList();
+            switchIntent(ListActivity.class);
         }
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
+
+        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
+            switchIntent(HomeActivity.class); // Change this to the landscape version
+        }
 
         Button btnAdd = (Button) v.findViewById(R.id.loginButton);
         btnAdd.setOnClickListener(this);
