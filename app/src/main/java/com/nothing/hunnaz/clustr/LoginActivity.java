@@ -23,7 +23,7 @@ public class LoginActivity extends SingleFragmentActivity{
         Fragment retVal = new LoginFragment();
         int rotation = this.getWindowManager().getDefaultDisplay().getRotation();
         if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
-            // Landscape
+            retVal = new LoginFragment(); // Change this to the landscape version
         }
         return retVal;
     }
