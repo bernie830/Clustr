@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout2"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -8,65 +10,95 @@
         android:id="@+id/backButtonRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:text="Back" />
+        android:layout_marginTop="8dp"
+        android:text="Back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/errorMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_gravity="center"
-        android:text="Please Enter the Following Information" />
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="20dp"
+        android:text="Please Enter the Following Information"
+        app:layout_constraintBottom_toTopOf="@+id/userNameRegister"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/backButtonRegister" />
 
     <EditText
         android:id="@+id/userNameRegister"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="20dp"
         android:hint="Enter a Username"
-        />
+        app:layout_constraintBottom_toTopOf="@+id/passwordRegister"
+        app:layout_constraintDimensionRatio="H,8:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/errorMessage" />
 
     <EditText
         android:id="@+id/passwordRegister"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="25dp"
+        android:hint="Enter a Password"
         android:inputType="textPassword"
-        android:hint="Enter a Password" />
+        app:layout_constraintBottom_toTopOf="@+id/passwordRegisterConfirm"
+        app:layout_constraintDimensionRatio="H,8:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userNameRegister" />
 
     <EditText
         android:id="@+id/passwordRegisterConfirm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="20dp"
+        android:hint="Confirm Your Password"
         android:inputType="textPassword"
-        android:hint="Confirm Your Password" />
+        app:layout_constraintBottom_toTopOf="@+id/dateOfBirthRegister"
+        app:layout_constraintDimensionRatio="H,8:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/passwordRegister" />
 
     <EditText
         android:id="@+id/dateOfBirthRegister"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
+        android:hint="Enter Your Date of Birth (mm/dd/yyyy)"
         android:inputType="date"
-        android:hint="Enter Your Date of Birth (mm/dd/yyyy)" />
+        app:layout_constraintBottom_toTopOf="@+id/doneRegisterButton"
+        app:layout_constraintDimensionRatio="H,8:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/passwordRegisterConfirm" />
 
     <Button
         android:id="@+id/doneRegisterButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_gravity="center"
-        android:text="Confirm" />
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="38dp"
+        android:text="Confirm"
+        app:layout_constraintBottom_toTopOf="@+id/currentUserButton"
+        app:layout_constraintEnd_toEndOf="@+id/currentUserButton"
+        app:layout_constraintTop_toBottomOf="@+id/dateOfBirthRegister" />
 
     <Button
         android:id="@+id/currentUserButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_gravity="center"
-        android:text="Already a Member?" />
+        android:layout_marginBottom="20dp"
+        android:text="Already a Member?"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/doneRegisterButton" />
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
