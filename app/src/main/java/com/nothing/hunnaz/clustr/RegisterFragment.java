@@ -2,6 +2,7 @@ package com.nothing.hunnaz.clustr;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -35,6 +36,11 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
         btnAdd = v.findViewById(R.id.doneRegisterButton);
         btnAdd.setOnClickListener(this);
+
+        usernameTextEntry = (EditText) v.findViewById(R.id.userNameRegister);
+        passwordTextEntry = (EditText) v.findViewById(R.id.passwordRegister);
+        passwordConfirmTextEntry = (EditText) v.findViewById(R.id.passwordRegisterConfirm);
+        dobTextEntry =  (EditText) v.findViewById(R.id.dateOfBirthRegister);
 
         return v;
     }
@@ -100,11 +106,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         ViewGroup v = (ViewGroup) view.getParent();
-        usernameTextEntry = v.findViewById(R.id.userNameRegister);
-        passwordTextEntry = v.findViewById(R.id.passwordRegister);
-        passwordConfirmTextEntry = v.findViewById(R.id.passwordRegisterConfirm);
-        dobTextEntry =  v.findViewById(R.id.dateOfBirthRegister);
-        TextView errorMessageText = v.findViewById(R.id.errorMessage);
+        TextView errorMessageText = (EditText) v.findViewById(R.id.errorMessage);
 
         //Because from here we only ever want to return to the Home screen
         //TODO Change to go to the home screen
@@ -118,6 +120,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                 String error = registerUser();
                 if(error.length() > 0){
                     errorMessageText.setText(error);
+                    errorMessageText.setTextColor(Color.RED);
                 } else {
                     changeToLogin();
                 }

@@ -31,6 +31,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         String retVal = "";
         if(validLogin) {
             UserPrefs.logInUser(username, this.getContext());
+            nextScreen = new Intent(this.getContext(), HomeActivity.class);
             startActivity(nextScreen);
         } else {
             retVal = "The entered information was invalid. Please try again.";
@@ -44,6 +45,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     }
 
     private void returnToWelcome(){
+        nextScreen = new Intent(this.getContext(), WelcomeActivity.class);
         startActivity(nextScreen);
     }
 
@@ -66,9 +68,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         passwordTextEntry = (EditText) v.findViewById(R.id.password);
         informationText = (TextView) v.findViewById(R.id.loginInfo);
 
-        //Because from here we only ever want to return to the Welcome screen
-        nextScreen = new Intent(this.getContext(), WelcomeActivity.class);
-
         switch (view.getId()) {
             case R.id.doneButton:
                 String newInfo = attemptLogin(usernameTextEntry.getText().toString(), passwordTextEntry.getText().toString());
@@ -79,7 +78,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
             case R.id.registerButton:
                 changeToRegister();
                 break;
-            case R.id.backButton:
+            case R.id.backButton: //TODO: Change back button to be in the App Bar
                 returnToWelcome();
                 break;
         }
@@ -92,7 +91,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
 
         View v = inflater.inflate(R.layout.fragment_login, container, false);
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
-
 
         Button btnAdd = (Button) v.findViewById(R.id.backButton);
         btnAdd.setOnClickListener(this);
