@@ -57,12 +57,26 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         return returnVal;
     }
 
-    private static boolean confirmPassword(String password, String confirmationPassword){
+    private static boolean confirmPasswordEquality(String password, String confirmationPassword){
+        return password.equals(confirmationPassword);
+    }
+
+    private static boolean confirmPasswordValidity(String password){
         boolean returnVal = true;
-        if(!password.equals(confirmationPassword) || password.length() < 8) {
+        if(password.length() < 8) {
             returnVal = false;
         }
         return returnVal;
+    }
+
+    private static String confirmPassword(String password, String confirmationPassword){
+        String retVal = "";
+        if(!confirmPasswordValidity(password)){
+            retVal = "The entered password is invalid. Please make sure the entered password is at least 8 characters in length";
+        } else if(!confirmPasswordEquality(password, confirmationPassword)){
+            retVal = "The entered password does not match the confirmation password. Please try again.";
+        }
+        return retVal;
     }
 
     private String registerUser(){
@@ -74,11 +88,11 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
         String currentError = "";
         if(!confirmUsername(username, singleton)){
-            currentError = "The username entered is not a valid username. Please enter another.";
+            currentError = "The username entered is already in use. Please enter another.";
         }
 
-        if(currentError.length() == 0 && !confirmPassword(password, passwordConfirm)){
-            currentError = "The password entered is either invalid or does not match the confirmation password. Please enter another.";
+        if(currentError.length() == 0){
+            currentError = confirmPassword(password, passwordConfirm);
         }
 
         Date dob = new Date(date);
