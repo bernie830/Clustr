@@ -2,7 +2,6 @@ package com.nothing.hunnaz.clustr;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -32,7 +31,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         String retVal = "";
         if(validLogin) {
             UserPrefs.logInUser(username, this.getContext());
-            switchIntent(ListActivity.class);
+            switchIntent(HomeActivity.class);
         } else {
             retVal = "The entered information was invalid. Please try again.";
         }
@@ -74,7 +73,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 switchIntent(RegisterActivity.class);
                 break;
             case R.id.backButton:
-                switchIntent(HomeActivity.class);
+                switchIntent(WelcomeActivity.class);
                 break;
         }
     }

@@ -2,7 +2,6 @@ package com.nothing.hunnaz.clustr;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -95,7 +94,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
             UserPrefs.logInUser(username, this.getActivity());
 
-            switchIntent(ListActivity.class);
+            switchIntent(HomeActivity.class);
         }
         return currentError;
     }
@@ -116,7 +115,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
         switch (view.getId()) {
             case R.id.backButtonRegister:
-                switchIntent(HomeActivity.class);
+                switchIntent(WelcomeActivity.class);
                 break;
             case R.id.doneRegisterButton:
                 String error = registerUser();

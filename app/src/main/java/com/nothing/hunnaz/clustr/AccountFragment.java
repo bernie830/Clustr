@@ -2,20 +2,13 @@ package com.nothing.hunnaz.clustr;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
 
 /**
@@ -24,7 +17,7 @@ import android.widget.Toast;
 public class AccountFragment extends Fragment implements View.OnClickListener {
     private void logoutUser(){
         UserPrefs.logOutUser(super.getContext());
-        switchIntent(HomeActivity.class);
+        switchIntent(WelcomeActivity.class);
     }
 
     private void switchIntent(Class name){
@@ -43,7 +36,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                 logoutUser();
                 break;
             case R.id.backButton:
-                switchIntent(HomeActivity.class);
+                switchIntent(WelcomeActivity.class);
                 break;
             case R.id.changePasswordButton:
                 changePass();
@@ -62,7 +55,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_account, container, false);
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
-
+        
         if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
             switchIntent(AccountActivity.class); // Change this to the landscape version
         }
