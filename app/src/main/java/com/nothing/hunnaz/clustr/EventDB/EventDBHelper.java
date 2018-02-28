@@ -11,7 +11,7 @@ import android.util.Log;
 public final class EventDBHelper extends SQLiteOpenHelper {
     /* All taken from TicTacToe */
     private Context mContext;
-    private static final String DATABASE_NAME = "Clustr.db";
+    private static final String DATABASE_NAME = "clustr_welcome_screen.db";
     private static final int DATABASE_VERSION = 1;
 
     // Class name for logging.

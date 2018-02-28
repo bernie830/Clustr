@@ -2,7 +2,6 @@ package com.nothing.hunnaz.clustr;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -44,7 +43,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         startActivity(nextScreen);
     }
 
-    private void returnToHome(){
+    private void returnToWelcome(){
         startActivity(nextScreen);
     }
 
@@ -67,8 +66,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         passwordTextEntry = (EditText) v.findViewById(R.id.password);
         informationText = (TextView) v.findViewById(R.id.loginInfo);
 
-        //Because from here we only ever want to return to the home screen
-        nextScreen = new Intent(this.getContext(), HomeActivity.class);
+        //Because from here we only ever want to return to the Welcome screen
+        nextScreen = new Intent(this.getContext(), WelcomeActivity.class);
 
         switch (view.getId()) {
             case R.id.doneButton:
@@ -81,7 +80,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 changeToRegister();
                 break;
             case R.id.backButton:
-                returnToHome();
+                returnToWelcome();
                 break;
         }
     }

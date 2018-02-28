@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "com.nothing.hunnaz.clustr"
+        applicationId "com.nothing.hunnaz.clustr_welcome_screen"
         minSdkVersion 15
         targetSdkVersion 26
         versionCode 1

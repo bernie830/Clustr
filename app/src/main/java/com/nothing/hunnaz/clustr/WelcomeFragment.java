@@ -2,7 +2,6 @@ package com.nothing.hunnaz.clustr;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,7 +13,7 @@ import android.widget.Button;
 /**
  *
  */
-public class HomeFragment extends Fragment implements View.OnClickListener{
+public class WelcomeFragment extends Fragment implements View.OnClickListener{
 
 
     private boolean isLoggedIn = false;
@@ -48,7 +47,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.fragment_home, container, false);
+        View v = inflater.inflate(R.layout.fragment_welcome, container, false);
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
 
         isLoggedIn = UserPrefs.isLoggedIn(this.getContext());

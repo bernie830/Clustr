@@ -2,7 +2,6 @@ package com.nothing.hunnaz.clustr;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -30,17 +29,11 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_register, container, false);
-        int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
 
-
-        // Not really lol
-        Button btnAdd = (Button) v.findViewById(R.id.backButtonRegister);
+        Button btnAdd = v.findViewById(R.id.cancelButtonRegister);
         btnAdd.setOnClickListener(this);
 
-        btnAdd = (Button) v.findViewById(R.id.currentUserButton);
-        btnAdd.setOnClickListener(this);
-
-        btnAdd = (Button) v.findViewById(R.id.doneRegisterButton);
+        btnAdd = v.findViewById(R.id.doneRegisterButton);
         btnAdd.setOnClickListener(this);
 
         return v;
@@ -69,23 +62,23 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         String passwordConfirm = passwordConfirmTextEntry.getText().toString();
         String date = dobTextEntry.getText().toString();
         UserSingleton singleton = UserSingleton.get(this.getContext());
-
-        String currentError = "";
-        if(!confirmUsername(username, singleton)){
-            currentError = "The username entered is not a valid username. Please enter another.";
-        }
-
-        if(currentError.length() == 0 && !confirmPassword(password, passwordConfirm)){
-            currentError = "The password entered is either invalid or does not match the confirmation password. Please enter another.";
-        }
-
         Date dob = new Date(date);
 
-        if(currentError.length() == 0 && !dob.confirmDate()){
-            currentError = "The date of birth entered is not a valid. Please enter another.";
-        }
+        String currentError = "";
+        if(username.equals("") || password.equals("") || passwordConfirm.equals("") || date.equals("")){
+            currentError = "ERROR: All fields are required to be filled in";
+        }else if(!confirmUsername(username, singleton)){
+            currentError = "ERROR: The username entered is not a valid username.";
+        }else if(!confirmPassword(password, passwordConfirm)){
+            currentError = "ERROR: The password entered does not match the confirmation password.";
+        }else if(password.length() > 8){
+            // ADD Password validation such as numbers, letters, etc.
+            currentError = "ERROR: The password entered is too long";
+        }else if(!dob.confirmDate()){
+            currentError = "ERROR: The date of birth entered is not valid.";
+        }else{
+            //NO errors occured
 
-        if(currentError.length() == 0) {
             // Add the account to the db
             User account = new User(username, password, date);
             singleton.addAccount(account);
@@ -95,11 +88,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
             // Go onto the next screen
             startActivity(nextScreen);
         }
-        return currentError;
-    }
 
-    private void returnToHome(){
-        startActivity(nextScreen);
+        return currentError;
     }
 
     private void changeToLogin(){
@@ -110,27 +100,27 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         ViewGroup v = (ViewGroup) view.getParent();
-        usernameTextEntry = (EditText) v.findViewById(R.id.userNameRegister);
-        passwordTextEntry = (EditText) v.findViewById(R.id.passwordRegister);
-        passwordConfirmTextEntry = (EditText) v.findViewById(R.id.passwordRegisterConfirm);
-        dobTextEntry = (EditText) v.findViewById(R.id.dateOfBirthRegister);
-        TextView errorMessageText = (TextView) v.findViewById(R.id.errorMessage);
+        usernameTextEntry = v.findViewById(R.id.userNameRegister);
+        passwordTextEntry = v.findViewById(R.id.passwordRegister);
+        passwordConfirmTextEntry = v.findViewById(R.id.passwordRegisterConfirm);
+        dobTextEntry =  v.findViewById(R.id.dateOfBirthRegister);
+        TextView errorMessageText = v.findViewById(R.id.errorMessage);
 
-        //Because from here we only ever want to return to the home screen
-        nextScreen = new Intent(this.getContext(), HomeActivity.class);
+        //Because from here we only ever want to return to the Home screen
+        //TODO Change to go to the home screen
+        nextScreen = new Intent(this.getContext(), LoginActivity.class);
 
         switch (view.getId()) {
-            case R.id.backButtonRegister:
-                returnToHome();
+            case R.id.cancelButtonRegister:
+                changeToLogin();
                 break;
             case R.id.doneRegisterButton:
                 String error = registerUser();
                 if(error.length() > 0){
                     errorMessageText.setText(error);
+                } else {
+                    changeToLogin();
                 }
-                break;
-            case R.id.currentUserButton:
-                changeToLogin();
                 break;
         }
     }

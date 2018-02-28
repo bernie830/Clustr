@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.nothing.hunnaz.clustr", appContext.getPackageName());
+        assertEquals("com.nothing.hunnaz.clustr_welcome_screen", appContext.getPackageName());
     }
 }

@@ -2,20 +2,12 @@ package com.nothing.hunnaz.clustr;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
 
 /**
@@ -28,7 +20,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     }
 
     private void returnToHome(){
-        Intent nextScreen = new Intent(this.getContext(), HomeActivity.class);
+        Intent nextScreen = new Intent(this.getContext(), WelcomeActivity.class);
         startActivity(nextScreen);
     }
 
