@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -24,7 +25,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     private EditText passwordTextEntry;
     private EditText passwordConfirmTextEntry;
     private EditText dobTextEntry;
-    private Intent nextScreen;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,15 +54,29 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         return returnVal;
     }
 
-    private static boolean confirmPassword(String password, String confirmationPassword){
+    private static boolean confirmPasswordEquality(String password, String confirmationPassword){
+        return password.equals(confirmationPassword);
+    }
+
+    private static boolean confirmPasswordValidity(String password){
         boolean returnVal = true;
-        if(!password.equals(confirmationPassword) || password.length() < 8) {
+        if(password.length() < 8) {
             returnVal = false;
         }
         return returnVal;
     }
 
-    private String registerUser(){
+    private static String confirmPassword(String password, String confirmationPassword){
+        String retVal = "";
+        if(!confirmPasswordValidity(password)){
+            retVal = "The entered password is invalid. Please make sure the entered password is at least 8 characters in length";
+        } else if(!confirmPasswordEquality(password, confirmationPassword)){
+            retVal = "The entered password does not match the confirmation password. Please try again.";
+        }
+        return retVal;
+    }
+
+    private String registerUser() {
         String username = usernameTextEntry.getText().toString();
         String password = passwordTextEntry.getText().toString();
         String passwordConfirm = passwordConfirmTextEntry.getText().toString();
@@ -71,18 +85,18 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         Date dob = new Date(date);
 
         String currentError = "";
-        if(username.equals("") || password.equals("") || passwordConfirm.equals("") || date.equals("")){
+        if (username.equals("") || password.equals("") || passwordConfirm.equals("") || date.equals("")) {
             currentError = "ERROR: All fields are required to be filled in";
-        }else if(!confirmUsername(username, singleton)){
+        } else if (!confirmUsername(username, singleton)) {
             currentError = "ERROR: The username entered is not a valid username.";
-        }else if(!confirmPassword(password, passwordConfirm)){
+        } else if (!confirmPassword(password, passwordConfirm)) {
             currentError = "ERROR: The password entered does not match the confirmation password.";
-        }else if(password.length() > 8){
+        } else if (password.length() > 8) {
             // ADD Password validation such as numbers, letters, etc.
             currentError = "ERROR: The password entered is too long";
-        }else if(!dob.confirmDate()){
+        } else if (!dob.confirmDate()) {
             currentError = "ERROR: The date of birth entered is not valid.";
-        }else{
+        } else {
             //NO errors occured
 
             // Add the account to the db
@@ -91,16 +105,13 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
             UserPrefs.logInUser(username, this.getActivity());
 
-            // Go onto the next screen
-            startActivity(nextScreen);
+            switchIntent(HomeActivity.class);
         }
-
-        return currentError;
     }
 
-    private void changeToLogin(){
-        nextScreen = new Intent(this.getContext(), LoginActivity.class);
-        startActivity(nextScreen);
+    private void switchIntent(Class name){
+        Intent myIntent = new Intent(this.getContext(), name);
+        startActivity(myIntent);
     }
 
     @Override

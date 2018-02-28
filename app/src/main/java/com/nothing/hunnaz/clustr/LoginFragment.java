@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,7 +23,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     private EditText usernameTextEntry;
     private EditText passwordTextEntry;
     private TextView informationText;
-    private Intent nextScreen;
 
     // Return an error message if there is one
     private String attemptLogin(String username, String password){
@@ -31,22 +31,16 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         String retVal = "";
         if(validLogin) {
             UserPrefs.logInUser(username, this.getContext());
-            nextScreen = new Intent(this.getContext(), HomeActivity.class);
-            startActivity(nextScreen);
+            switchIntent(HomeActivity.class);
         } else {
             retVal = "The entered information was invalid. Please try again.";
         }
         return retVal;
     }
 
-    private void changeToRegister(){
-        nextScreen = new Intent(this.getContext(), RegisterActivity.class);
-        startActivity(nextScreen);
-    }
-
-    private void returnToWelcome(){
-        nextScreen = new Intent(this.getContext(), WelcomeActivity.class);
-        startActivity(nextScreen);
+    private void switchIntent(Class name){
+        Intent myIntent = new Intent(this.getContext(), name);
+        startActivity(myIntent);
     }
 
     @Override
@@ -76,10 +70,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 }
                 break;
             case R.id.registerButton:
-                changeToRegister();
+                switchIntent(RegisterActivity.class);
                 break;
-            case R.id.backButton: //TODO: Change back button to be in the App Bar
-                returnToWelcome();
+            case R.id.backButton:
+                switchIntent(WelcomeActivity.class);//TODO: Change back button to be in the App Bar
                 break;
         }
     }
@@ -91,6 +85,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
 
         View v = inflater.inflate(R.layout.fragment_login, container, false);
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
+
+        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
+            switchIntent(LoginActivity.class); // Change this to the landscape version
+        }
 
         Button btnAdd = (Button) v.findViewById(R.id.backButton);
         btnAdd.setOnClickListener(this);

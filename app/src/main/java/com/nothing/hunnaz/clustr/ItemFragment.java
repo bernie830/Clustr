@@ -2,19 +2,29 @@ package com.nothing.hunnaz.clustr;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+
 import android.widget.Button;
 
 
 /**
  *
  */
-public class WelcomeFragment extends Fragment implements View.OnClickListener{
+public class ItemFragment extends Fragment implements View.OnClickListener{
+
+
+    private void closeFragment(){
+        getFragmentManager().popBackStackImmediate();
+    }
 
     private void switchIntent(Class name){
         Intent myIntent = new Intent(this.getContext(), name);
@@ -25,40 +35,26 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener{
     public void onClick(View view) {
         ViewGroup v = (ViewGroup) view.getParent();
         switch (view.getId()) {
-            case R.id.loginButton:
-                switchIntent(LoginActivity.class);
+            case R.id.exitFab:
+                closeFragment();
                 break;
         }
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if(UserPrefs.isLoggedIn(this.getContext())){
-            switchIntent(HomeActivity.class);
-        }
-        View v = inflater.inflate(R.layout.fragment_welcome, container, false);
+        View v = inflater.inflate(R.layout.fragment_item, container, false);
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
 
-        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
-            switchIntent(WelcomeActivity.class); // Change this to the landscape version
-        }
 
-        Button btnAdd = (Button) v.findViewById(R.id.loginButton);
-        btnAdd.setOnClickListener(this);
+        //ImageView image = (ImageView) v.findViewById(R.id.eventImage);
+        //image.setImageResource(R.mipmap.missing_img_round);
+
+        FloatingActionButton exit = (FloatingActionButton) v.findViewById(R.id.exitFab);
+        exit.setOnClickListener(this);
 
         return v;
     }
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
 }
+
