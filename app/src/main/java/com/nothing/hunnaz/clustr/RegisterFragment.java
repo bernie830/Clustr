@@ -69,9 +69,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     private static String confirmPassword(String password, String confirmationPassword){
         String retVal = "";
         if(!confirmPasswordValidity(password)){
-            retVal = "The entered password is invalid. Please make sure the entered password is at least 8 characters in length";
+            retVal = "ERROR: The entered password is invalid. Please make sure the entered password is at least 8 characters in length";
         } else if(!confirmPasswordEquality(password, confirmationPassword)){
-            retVal = "The entered password does not match the confirmation password. Please try again.";
+            retVal = "ERROR: The entered password does not match the confirmation password. Please try again.";
         }
         return retVal;
     }
@@ -89,8 +89,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
             currentError = "ERROR: All fields are required to be filled in";
         } else if (!confirmUsername(username, singleton)) {
             currentError = "ERROR: The username entered is not a valid username.";
-        } else if (!confirmPassword(password, passwordConfirm)) {
-            currentError = "ERROR: The password entered does not match the confirmation password.";
+        } else if (confirmPassword(password, passwordConfirm).length() > 0) {
+            currentError = confirmPassword(password, passwordConfirm);
         } else if (password.length() > 8) {
             // ADD Password validation such as numbers, letters, etc.
             currentError = "ERROR: The password entered is too long";
@@ -107,6 +107,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
             switchIntent(HomeActivity.class);
         }
+        return currentError;
     }
 
     private void switchIntent(Class name){
@@ -121,11 +122,10 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
         //Because from here we only ever want to return to the Home screen
         //TODO Change to go to the home screen
-        nextScreen = new Intent(this.getContext(), LoginActivity.class);
 
         switch (view.getId()) {
             case R.id.cancelButtonRegister:
-                changeToLogin();
+                switchIntent(LoginActivity.class);
                 break;
             case R.id.doneRegisterButton:
                 String error = registerUser();
@@ -133,7 +133,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                     errorMessageText.setText(error);
                     errorMessageText.setTextColor(Color.RED);
                 } else {
-                    changeToLogin();
+                    // Logs the user in automatically if no errors
+                    switchIntent(HomeActivity.class);
                 }
                 break;
         }

@@ -37,7 +37,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:hint="Enter a Username"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/password"
@@ -45,6 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
                 android:hint="Enter a Password"
+                android:imeOptions="actionDone"
                 android:inputType="textPassword" />
 
             <Button

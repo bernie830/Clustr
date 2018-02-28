@@ -25,7 +25,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:hint="Enter a Username" />
+                android:hint="Enter a Username"
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/passwordRegister"
@@ -48,6 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
+                android:imeOptions="actionDone"
                 android:hint="Enter Your Date of Birth (mm/dd/yyyy)"
                 android:inputType="date" />
 
