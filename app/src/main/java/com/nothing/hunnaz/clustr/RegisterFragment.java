@@ -87,7 +87,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
         if(currentError.length() == 0) {
             // Add the account to the db
-            User account = new User(username, password, date);
+            User account = new User(date, "email@email.com", password, username);
             singleton.addAccount(account);
 
             UserPrefs.logInUser(username, this.getActivity());

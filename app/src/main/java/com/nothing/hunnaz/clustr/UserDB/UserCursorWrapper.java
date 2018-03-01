@@ -17,7 +17,8 @@ public class UserCursorWrapper extends CursorWrapper {
         String password = getString(getColumnIndex(UserDBSchema.AccountsTable.Cols.PASSWORD));
         String dob = getString(getColumnIndex(UserDBSchema.AccountsTable.Cols.DATE_OF_BIRTH));
 
-        User account = new User(name, password, dob);
+        User account = new User(dob, "email@email.com", password, name);
+
 
         return account;
     }

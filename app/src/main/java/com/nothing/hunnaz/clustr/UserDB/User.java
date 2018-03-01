@@ -1,48 +1,92 @@
 package com.nothing.hunnaz.clustr.UserDB;
 
+import org.apache.commons.lang3.builder.*;
+
 /**
  * Created by hunterbernhardt on 2/9/18.
  */
 public class User {
-    private String name;
-    private String pass;
-    private String birthDate;
+    private String birthday;
+    private String email;
+    private String password;
+    private String username;
+    // TODO: implement created and attending
 
-    public User(String username, String password, String dateOfBirth) {
-        name = username;
-        pass = password;
-        birthDate = dateOfBirth;
+    public User(String birthday, String email, String password, String username) {
+        this.birthday = birthday;
+        this.email = email;
+        this.password = password;
+        this.username = username;
     }
 
-    public String getName() {
-        return name;
+    public User() {}
+
+    // Getters and Setters
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
-        return pass;
+        return password;
     }
 
-    public String getDateOfBirth() {
-        return birthDate;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
+    public String getUsername() {
+        return username;
+    }
 
-    // Taken from Account on Tic Tac Toe
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
+    public String toString() {
+        return "Username: " + this.username +
+                "\nBirthday: " + this.birthday +
+                "\nEmail: " + this.email +
+                "\nPassword: " + this.password;
+    }
+
+    // Taken from https://www.mkyong.com/java/java-how-to-overrides-equals-and-hashcode/
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof User)) {
+            return false;
+        }
 
-        User account = (User) o;
+        User event = (User) o;
 
-        return name.equals(account.name) && pass.equals(account.pass) && birthDate.equals(account.birthDate);
+        return new EqualsBuilder()
+                .append(birthday, event.birthday)
+                .append(email, event.email)
+                .append(password, event.password)
+                .append(username, event.username)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = name.hashCode() + birthDate.hashCode();
-        result = 31 * result + pass.hashCode();
-        return result;
-
+        return new HashCodeBuilder(17, 37)
+                .append(birthday)
+                .append(email)
+                .append(password)
+                .append(username)
+                .toHashCode();
     }
 }
