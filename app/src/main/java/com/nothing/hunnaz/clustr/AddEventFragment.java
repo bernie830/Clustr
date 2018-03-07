@@ -38,6 +38,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    // TODO - Need to do this
     private static String validateName(String name){
         String retVal = "";
         int len = name.length();
