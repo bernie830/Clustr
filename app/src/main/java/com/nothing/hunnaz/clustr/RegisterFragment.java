@@ -117,8 +117,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        ViewGroup v = (ViewGroup) view.getParent();
-        TextView errorMessageText = (EditText) v.findViewById(R.id.errorMessage);
+        ViewGroup v = (ViewGroup) view.getParent().getParent();
+        TextView errorMessageText = (TextView) v.findViewById(R.id.errorMessage);
 
         //Because from here we only ever want to return to the Home screen
         //TODO Change to go to the home screen

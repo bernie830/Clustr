@@ -24,11 +24,6 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
     private EditText confirmPassTextEntry;
     private TextView loginInfoMessage;
 
-    private void switchIntent(Class name){
-        Intent myIntent = new Intent(this.getContext(), name);
-        startActivity(myIntent);
-    }
-
     private boolean confirmOldInformation(String username, String pass){
         UserSingleton singleton = UserSingleton.get(this.getContext());
         boolean validLogin = singleton.isValidLogin(username, pass);
@@ -39,6 +34,11 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
     private void saveNewPassword(String username, String newPass){
         UserSingleton singleton = UserSingleton.get(this.getContext());
         singleton.changePassword(username, newPass);
+    }
+
+    private void switchIntent(Class name){
+        Intent myIntent = new Intent(this.getContext(), name);
+        startActivity(myIntent);
     }
 
     @Override
