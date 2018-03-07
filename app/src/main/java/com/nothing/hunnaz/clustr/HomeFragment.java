@@ -30,6 +30,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         FragmentTransaction transaction = manager.beginTransaction().add(this.getId(), itemFragment);
         transaction.addToBackStack("added");
         transaction.commit();
+
     }
 
     @Override

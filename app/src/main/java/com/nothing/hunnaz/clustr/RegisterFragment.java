@@ -91,9 +91,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
             currentError = "ERROR: The username entered is not a valid username.";
         } else if (confirmPassword(password, passwordConfirm).length() > 0) {
             currentError = confirmPassword(password, passwordConfirm);
-        } else if (password.length() > 8) {
+        } else if (password.length() < 8) {
             // ADD Password validation such as numbers, letters, etc.
-            currentError = "ERROR: The password entered is too long";
+            currentError = "ERROR: The password entered is not long enough";
         } else if (!dob.confirmDate()) {
             currentError = "ERROR: The date of birth entered is not valid.";
         } else {

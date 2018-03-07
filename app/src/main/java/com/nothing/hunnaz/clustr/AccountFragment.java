@@ -26,7 +26,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     }
 
     private void changePass(){
-
+        switchIntent(ChangePasswordActivity.class);
     }
 
     @Override

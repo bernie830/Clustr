@@ -63,6 +63,10 @@ public class UserSingleton {
         }
     }
 
+    public void changePassword(String username, String password) {
+        // TODO - Does nothing right now
+    }
+
     /**
      * Delete all user accounts from the database. This DB logic uses code from Jake Wharton:
      * http://jakewharton.com/kotlin-is-here/ (slide 61). It's much easier in Kotlin!

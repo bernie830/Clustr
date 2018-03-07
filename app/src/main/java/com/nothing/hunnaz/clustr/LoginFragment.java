@@ -82,7 +82,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View v = inflater.inflate(R.layout.fragment_login, container, false);
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
 
