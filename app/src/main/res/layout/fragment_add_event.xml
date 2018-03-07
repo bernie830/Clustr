@@ -28,49 +28,79 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="64dp"
-                android:text="Please enter your information" />
+                android:layout_marginTop="8dp"
+                android:text="Please enter information about your event" />
 
             <EditText
-                android:id="@+id/userName"
+                android:id="@+id/eventName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Enter Username"
+                android:hint="Name of Event"
                 android:inputType="textPersonName"
                 android:singleLine="true" />
 
             <EditText
-                android:id="@+id/password"
+                android:id="@+id/address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:hint="Enter Old Password"
-                android:inputType="textPassword" />
+                android:layout_marginTop="16dp"
+                android:hint="Address of Event"
+                android:inputType="textPersonName"
+                android:singleLine="true" />
 
             <EditText
-                android:id="@+id/newPassword"
+                android:id="@+id/date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:hint="Enter New Password"
-                android:inputType="textPassword" />
+                android:layout_marginTop="16dp"
+                android:hint="Date of Event"
+                android:inputType="date"
+                android:singleLine="true" />
 
             <EditText
-                android:id="@+id/newPasswordConfirm"
+                android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:hint="Confirm New Password"
+                android:layout_marginTop="16dp"
+                android:hint="Description of Event"
+                android:inputType="textMultiLine"
+                android:singleLine="false" />
+
+            <EditText
+                android:id="@+id/cost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Cost of Entry"
+                android:inputType="numberDecimal"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/age"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Age Required to Attend"
+                android:inputType="number"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/capacity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Maximum Capacity of Event"
                 android:imeOptions="actionDone"
-                android:inputType="textPassword" />
+                android:inputType="number"
+                android:singleLine="true" />
 
             <Button
                 android:id="@+id/doneButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="64dp"
+                android:layout_marginTop="32dp"
                 android:text="Login" />
 
         </LinearLayout>

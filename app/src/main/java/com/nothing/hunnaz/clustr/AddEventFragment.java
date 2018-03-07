@@ -31,7 +31,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_change_password, container, false);
+        View v = inflater.inflate(R.layout.fragment_add_event, container, false);
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
 
         if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {

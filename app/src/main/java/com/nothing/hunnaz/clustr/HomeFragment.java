@@ -43,6 +43,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             case R.id.testShow:
                 showItem();
                 break;
+            case R.id.addEventButton:
+                switchIntent(AddEventActivity.class);
+                break;
         }
     }
 
@@ -65,10 +68,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         btnAdd = (Button) v.findViewById(R.id.testShow);
         btnAdd.setOnClickListener(this);
 
+        FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.addEventButton);
+        fab.setOnClickListener(this);
 
         // Not sure what this does but probably important
         if(false) {
-            FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.addEventButton);
+            fab = (FloatingActionButton) v.findViewById(R.id.addEventButton);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
