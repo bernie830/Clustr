@@ -71,18 +71,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.addEventButton);
         fab.setOnClickListener(this);
 
-        // Not sure what this does but probably important
-        if(false) {
-            fab = (FloatingActionButton) v.findViewById(R.id.addEventButton);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-            });
-        }
-
         return v;
     }
 }
