@@ -1,74 +1,144 @@
 package com.nothing.hunnaz.clustr.EventDB;
 
+import org.apache.commons.lang3.builder.*;
+
 /**
  * Created by hunterbernhardt on 2/9/18.
  */
 public class Event {
-    private String titleField;
-    private String locationField;
-    private int capacityField;
-    private String dateField;
-    private String descriptionField;
-    private double costField;
-    private int ageField;
-    private String creatorField;
+    private String title;
+    private String location;
+    private int capacity;
+    private String date;
+    private String description;
+    private double cost;
+    private int age;
+    private String creator;
+    // TODO: implement pictureIDField and guestListField
 
     public Event(String title, String location, int capacity, String date, String description, double cost, int age, String creator) {
-        titleField = title;
-        locationField = location;
-        capacityField = capacity;
-        dateField = date;
-        descriptionField = description;
-        costField = cost;
-        ageField = age;
-        creatorField = title;
+        this.title = title;
+        this.location = location;
+        this.capacity = capacity;
+        this.date = date;
+        this.description = description;
+        this.cost = cost;
+        this.age = age;
+        this.creator = title;
+    }
+    
+    public Event() {}
+
+    // Getters and Setters
+    public String getTitle() {
+        return title;
     }
 
-    public String getTitle() {
-        return titleField;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getLocation() {
-        return locationField;
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public int getCapacity() {
-        return capacityField;
+        return capacity;
     }
 
-    public String getDate() { return dateField;}
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
 
-    public String getDescription() { return descriptionField;}
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public double getCost() {
-        return costField;
+        return cost;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
     }
 
     public int getAge() {
-        return ageField;
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public String getCreator() {
-        return creatorField;
+        return creator;
     }
 
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
 
-    // Taken from Account on Tic Tac Toe
+    @Override
+    public String toString() {
+        return "Title: " + this.title +
+                "\nLocation: " + this.location +
+                "\nCapacity: " + this.capacity +
+                "\nDate: " + this.date +
+                "\nDescription: " + this.description +
+                "\nCost: " + this.cost +
+                "\nAge: " + this.age +
+                "\nCreator: " + this.creator;
+    }
+
+    // Taken from https://www.mkyong.com/java/java-how-to-overrides-equals-and-hashcode/
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Event)) {
+            return false;
+        }
 
         Event event = (Event) o;
 
-        return titleField.equals(event.titleField) && locationField.equals(event.locationField) && dateField.equals(event.dateField);
+        return new EqualsBuilder()
+                .append(title, event.title)
+                .append(location, event.location)
+                .append(capacity, event.capacity)
+                .append(date, event.date)
+                .append(description, event.description)
+                .append(cost, event.cost)
+                .append(age, event.age)
+                .append(creator, event.creator)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = titleField.hashCode() + dateField.hashCode();
-        result = 31 * result + descriptionField.hashCode();
-        return result;
-
+        return new HashCodeBuilder(17, 37)
+                .append(title)
+                .append(location)
+                .append(capacity)
+                .append(date)
+                .append(description)
+                .append(cost)
+                .append(age)
+                .append(creator)
+                .toHashCode();
     }
 }
