@@ -58,22 +58,15 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         return password.equals(confirmationPassword);
     }
 
-    private static boolean confirmPasswordValidity(String password){
-        boolean returnVal = true;
-        if(password.length() < 8) {
-            returnVal = false;
+    private static String confirmPasswordValidity(String password){
+        // ADD Password validation such as numbers, letters, etc.
+        String returnVal = "";
+        int passLength = 5;
+
+        if(password.length() < passLength) {
+            returnVal = "ERROR: The password entered is not long enough. Must be at least " + passLength + " characters.";
         }
         return returnVal;
-    }
-
-    private static String confirmPassword(String password, String confirmationPassword){
-        String retVal = "";
-        if(!confirmPasswordValidity(password)){
-            retVal = "ERROR: The entered password is invalid. Please make sure the entered password is at least 8 characters in length";
-        } else if(!confirmPasswordEquality(password, confirmationPassword)){
-            retVal = "ERROR: The entered password does not match the confirmation password. Please try again.";
-        }
-        return retVal;
     }
 
     private String registerUser() {
@@ -83,17 +76,18 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         String date = dobTextEntry.getText().toString();
         UserSingleton singleton = UserSingleton.get(this.getContext());
         Date dob = new Date(date);
-
         String currentError = "";
+
+       String passwordError = confirmPasswordValidity(password);
+
         if (username.equals("") || password.equals("") || passwordConfirm.equals("") || date.equals("")) {
             currentError = "ERROR: All fields are required to be filled in";
         } else if (!confirmUsername(username, singleton)) {
             currentError = "ERROR: The username entered is not a valid username.";
-        } else if (confirmPassword(password, passwordConfirm).length() > 0) {
-            currentError = confirmPassword(password, passwordConfirm);
-        } else if (password.length() < 8) {
-            // ADD Password validation such as numbers, letters, etc.
-            currentError = "ERROR: The password entered is not long enough";
+        } else if (passwordError.length() > 0) {
+            currentError = passwordError;
+        }else if(!confirmPasswordEquality(password, passwordConfirm)) {
+            currentError = "ERROR: The entered password does not match the confirmation password.";
         } else if (!dob.confirmDate()) {
             currentError = "ERROR: The date of birth entered is not valid.";
         } else {
