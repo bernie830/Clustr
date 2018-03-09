@@ -38,7 +38,6 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    // TODO - Need to do this
     private static String validateName(String name){
         String retVal = "";
         int len = name.length();
@@ -47,17 +46,26 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         return retVal;
     }
 
-    // TODO - Need to do this
     private static String validateCost(String cost){
         String retVal = "";
-        if(cost.length() == 0){
-            retVal = "ERROR: A name must be entered for the event";
+        double newCost = 0.0;
+        try {
+            newCost = Double.parseDouble(cost);
+        } catch (NumberFormatException e){
+            retVal = "ERROR: The entered cost is not a valid price";
         }
+        boolean b = (newCost < 0);
+        if(b) { retVal = "ERROR: A cost must be entered for the event and must be greater than $0.00"; }
         return retVal;    }
 
     private static String validateAge(String age){
         String retVal = "";
-        int ageNum = Integer.parseInt(age);
+        int ageNum = 1;
+        try {
+            ageNum = Integer.parseInt(age);
+        } catch (NumberFormatException e){
+            retVal = "ERROR: The entered age is not a valid age";
+        }
         if(ageNum < 1 || ageNum > 100){
             retVal = "ERROR: The age requirement must be between 1 and 100";
         }
@@ -74,17 +82,22 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
     private static String validateCap(String capacity){
         String retVal = "";
-        int capNum = Integer.parseInt(capacity);
-        if(capNum < 10){
-            retVal = "ERROR: The age requirement must be one or more";
+        int capNum = 1;
+        try {
+            capNum = Integer.parseInt(capacity);
+        } catch (NumberFormatException e){
+            retVal = "ERROR: The entered capacity is not a valid capacity";
         }
-        return retVal;    }
+        boolean b = (capNum < 1);
+        if(b) { retVal = "ERROR: The age requirement must be one or more"; }
+        return retVal;
+    }
 
     private static String validateAddress(String address){
         String retVal = "";
-        if(address.length() == 0) {
-            retVal = "ERROR: An address must be entered for the event";
-        }
+        int len = address.length();
+        boolean b = (len == 0);
+        if(b) { retVal = "ERROR: An address must be entered for the event"; }
         return retVal;    }
 
     @Override
@@ -102,19 +115,19 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                 String addressStr = address.getText().toString();
                 String errorMessage = validateName(nameStr);
                 if(errorMessage.length() == 0){
+                    errorMessage = validateAddress(addressStr);
+                }
+                if(errorMessage.length() == 0){
+                    errorMessage = validateDate(dateStr);
+                }
+                if(errorMessage.length() == 0){
                     errorMessage = validateCost(costStr);
                 }
                 if(errorMessage.length() == 0){
                     errorMessage = validateAge(ageStr);
                 }
                 if(errorMessage.length() == 0){
-                    errorMessage = validateDate(dateStr);
-                }
-                if(errorMessage.length() == 0){
                     errorMessage = validateCap(capacityStr);
-                }
-                if(errorMessage.length() == 0){
-                    errorMessage = validateAddress(capacityStr);
                 }
                 // Assume description can be empty
                 if(errorMessage.length() == 0) {
