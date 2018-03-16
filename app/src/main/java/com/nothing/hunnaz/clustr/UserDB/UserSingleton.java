@@ -35,7 +35,6 @@ public class UserSingleton {
     private static ContentValues getContentValues(User account) {
         ContentValues values = new ContentValues();
         values.put(UserDBSchema.AccountsTable.Cols.USERNAME, account.getUsername());
-        values.put(UserDBSchema.AccountsTable.Cols.PASSWORD, account.getPassword());
         values.put(UserDBSchema.AccountsTable.Cols.DATE_OF_BIRTH, account.getBirthday());
 
         return values;
@@ -54,7 +53,6 @@ public class UserSingleton {
         try {
             SQLiteStatement statement = database.compileStatement(INSERT_STMT);
             statement.bindString(1, account.getUsername());
-            statement.bindString(2, account.getPassword());
             statement.bindString(3, account.getBirthday());
             statement.executeInsert();
             database.setTransactionSuccessful();
@@ -127,7 +125,7 @@ public class UserSingleton {
         List<User> accounts = getAllAccounts();
         boolean returnVal = false;
         for(User u : accounts){
-            if(u.getUsername().equals(username) && u.getPassword().equals(password)){
+            if(u.getUsername().equals(username)){
                 returnVal = true;
             }
         }

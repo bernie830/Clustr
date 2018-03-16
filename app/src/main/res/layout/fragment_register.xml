@@ -29,6 +29,14 @@
                 android:singleLine="true" />
 
             <EditText
+                android:id="@+id/emailRegister"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:hint="Enter an email address"
+                android:singleLine="true" />
+
+            <EditText
                 android:id="@+id/passwordRegister"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

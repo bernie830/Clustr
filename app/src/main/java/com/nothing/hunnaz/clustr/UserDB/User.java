@@ -8,15 +8,15 @@ import org.apache.commons.lang3.builder.*;
 public class User {
     private String birthday;
     private String email;
-    private String password;
     private String username;
+    private String accountID;
     // TODO: implement created and attending
 
-    public User(String birthday, String email, String password, String username) {
+    public User(String birthday, String email,  String username, String accountID) {
         this.birthday = birthday;
         this.email = email;
-        this.password = password;
         this.username = username;
+        this.accountID = accountID;
     }
 
     public User() {}
@@ -38,14 +38,6 @@ public class User {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -54,12 +46,20 @@ public class User {
         this.username = username;
     }
 
+    public String getAccountID() {
+        return accountID;
+    }
+
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
+    }
+
     @Override
     public String toString() {
         return "Username: " + this.username +
-                "\nBirthday: " + this.birthday +
                 "\nEmail: " + this.email +
-                "\nPassword: " + this.password;
+                "\nBirthday: " + this.birthday +
+                "\nAccount ID: " + this.accountID;
     }
 
     // Taken from https://www.mkyong.com/java/java-how-to-overrides-equals-and-hashcode/
@@ -75,8 +75,8 @@ public class User {
         return new EqualsBuilder()
                 .append(birthday, event.birthday)
                 .append(email, event.email)
-                .append(password, event.password)
                 .append(username, event.username)
+                .append(accountID, event.accountID)
                 .isEquals();
     }
 
@@ -85,8 +85,8 @@ public class User {
         return new HashCodeBuilder(17, 37)
                 .append(birthday)
                 .append(email)
-                .append(password)
                 .append(username)
+                .append(accountID)
                 .toHashCode();
     }
 }
