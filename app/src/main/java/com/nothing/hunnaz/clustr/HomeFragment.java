@@ -40,10 +40,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         startActivity(myIntent);
     }
 
-    private void showItem(){
+    private void showItem(Event event){
 
         FragmentManager manager = getFragmentManager();
-        ItemFragment itemFragment = new ItemFragment();
+        ItemFragment itemFragment = ItemFragment.newInstance(event);
         FragmentTransaction transaction = manager.beginTransaction().add(this.getId(), itemFragment);
         transaction.addToBackStack("added");
         transaction.commit();
@@ -58,7 +58,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 switchIntent(AccountActivity.class);
                 break;
             case R.id.testShow:
-                showItem();
+                // TODO - This needs to be the event that was clicked
+                Event event = new Event("Fake Event","Here",1,"11/11/11","This is a cool event for being fake.",1,1,"Me");
+                showItem(event);
                 break;
             case R.id.addEventButton:
                 switchIntent(AddEventActivity.class);

@@ -50,24 +50,20 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         startActivity(myIntent);
     }
 
-    // TODO - Does nothing until the DB is implemented
     private void addEventToDatabase(Event event){
         Log.d(TAG, "create event: " + event.getTitle());
         mDatabase.child("events").push().setValue(event);
     }
 
-    // TODO - Need to do this
     private static String validateName(String name){
         String retVal = "";
         int len = name.length();
         boolean b = (len == 0);
         if(b) { retVal = "ERROR: A name must be entered for the event"; }
 
-        //TODO - Need to also check that the user does not already have one with same name (used as ID)
         return retVal;
     }
 
-    // TODO - Need to do this
     private static String validateCost(String cost){
         String retVal = "";
         if(cost.length() == 0){
@@ -159,7 +155,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                     int capacityDone = Integer.parseInt(capacityStr);
                     double costDone = Double.parseDouble(costStr);
                     int ageDone = Integer.parseInt(ageStr);
-                    String currentUser = currentFirebaseUser.getUid();  // TODO - Need to get this up and running
+                    String currentUser = currentFirebaseUser.getUid();
                     Event newEvent = new Event(nameStr, addressStr, capacityDone, day.toString(), descriptionStr, costDone, ageDone, currentUser);
                     addEventToDatabase(newEvent);
                     switchIntent(HomeActivity.class);
