@@ -24,7 +24,7 @@ public class EventCursorWrapper extends CursorWrapper {
         int age = (int)getLong(getColumnIndex(EventDBSchema.EventsTable.Cols.AGE));
         String creator = getString(getColumnIndex(EventDBSchema.EventsTable.Cols.CREATOR));
 
-        Event account = new Event(title, location, capacity, date, description, cost, age, creator);
+        Event account = new Event(title, location, capacity, date, description, cost, age, creator, 0);
 
         return account;
     }

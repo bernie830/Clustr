@@ -14,9 +14,10 @@ public class Event {
     private double cost;
     private int age;
     private String creator;
+    private int currAttending;
     // TODO: implement pictureIDField and guestListField
 
-    public Event(String title, String location, int capacity, String date, String description, double cost, int age, String creatorID) {
+    public Event(String title, String location, int capacity, String date, String description, double cost, int age, String creatorID, int currAttendance) {
         this.title = title;
         this.location = location;
         this.capacity = capacity;
@@ -25,6 +26,7 @@ public class Event {
         this.cost = cost;
         this.age = age;
         this.creator = creatorID;
+        this.currAttending = currAttendance;
     }
     
     public Event() {}
@@ -92,6 +94,14 @@ public class Event {
 
     public void setCreatorId(String creator) {
         this.creator = creator;
+    }
+
+    public int getNumCurrentAttending() {
+        return currAttending;
+    }
+
+    public void setNumCurrentAttending(int num) {
+        this.currAttending = num;
     }
 
     @Override

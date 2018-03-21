@@ -156,7 +156,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                     double costDone = Double.parseDouble(costStr);
                     int ageDone = Integer.parseInt(ageStr);
                     String currentUser = currentFirebaseUser.getUid();
-                    Event newEvent = new Event(nameStr, addressStr, capacityDone, day.toString(), descriptionStr, costDone, ageDone, currentUser);
+                    Event newEvent = new Event(nameStr, addressStr, capacityDone, day.toString(), descriptionStr, costDone, ageDone, currentUser, 0);
                     addEventToDatabase(newEvent);
                     switchIntent(HomeActivity.class);
                 } else {

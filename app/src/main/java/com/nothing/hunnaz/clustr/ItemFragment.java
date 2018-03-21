@@ -44,6 +44,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         args.putDouble("cost", e.getCost());
         args.putInt("age", e.getAge());
         args.putString("creator", e.getCreatorId());
+        args.putInt("numAttending", e.getNumCurrentAttending());
         frag.setArguments(args);
         return frag;
     }
@@ -80,6 +81,10 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         TextView age = (TextView) v.findViewById(R.id.eventAge);
         String ageStr = "Age Required to Attend: " + Integer.toString(event.getAge());
         age.setText(ageStr);
+        TextView openSpots = (TextView) v.findViewById(R.id.eventOpenSpots);
+        String openSpotsStr = "Open Spots Remaining: " + Integer.toString(event.getCapacity() - event.getNumCurrentAttending());
+        age.setText(openSpotsStr);
+
     }
 
     @Override
@@ -96,8 +101,9 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         double cost = this.getArguments().getDouble("cost");
         int age = this.getArguments().getInt("age");
         String creator = this.getArguments().getString("creator");
+        int num = this.getArguments().getInt("numAttending");
 
-        event = new Event(title, location, capacity, date, description, cost, age, creator);
+        event = new Event(title, location, capacity, date, description, cost, age, creator, num);
 
         //ImageView image = (ImageView) v.findViewById(R.id.eventImage);
         //image.setImageResource(R.mipmap.missing_img_round);
