@@ -42,7 +42,7 @@ public class EventSingleton {
         values.put(EventDBSchema.EventsTable.Cols.DESCRIPTION, event.getDescription());
         values.put(EventDBSchema.EventsTable.Cols.COST, event.getCost());
         values.put(EventDBSchema.EventsTable.Cols.AGE, event.getAge());
-        values.put(EventDBSchema.EventsTable.Cols.CREATOR, event.getCreator());
+        values.put(EventDBSchema.EventsTable.Cols.CREATOR, event.getCreatorId());
 
         return values;
     }
@@ -66,7 +66,7 @@ public class EventSingleton {
             statement.bindString(5, event.getDescription());
             statement.bindDouble(6, event.getCost());
             statement.bindLong(7, event.getAge());
-            statement.bindString(8, event.getCreator());
+            statement.bindString(8, event.getCreatorId());
 
             statement.executeInsert();
             database.setTransactionSuccessful();

@@ -16,7 +16,7 @@ public class Event {
     private String creator;
     // TODO: implement pictureIDField and guestListField
 
-    public Event(String title, String location, int capacity, String date, String description, double cost, int age, String creator) {
+    public Event(String title, String location, int capacity, String date, String description, double cost, int age, String creatorID) {
         this.title = title;
         this.location = location;
         this.capacity = capacity;
@@ -24,7 +24,7 @@ public class Event {
         this.description = description;
         this.cost = cost;
         this.age = age;
-        this.creator = title;
+        this.creator = creatorID;
     }
     
     public Event() {}
@@ -86,11 +86,11 @@ public class Event {
         this.age = age;
     }
 
-    public String getCreator() {
+    public String getCreatorId() {
         return creator;
     }
 
-    public void setCreator(String creator) {
+    public void setCreatorId(String creator) {
         this.creator = creator;
     }
 

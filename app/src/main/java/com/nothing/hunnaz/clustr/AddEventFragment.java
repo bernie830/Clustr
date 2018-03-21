@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
@@ -12,6 +14,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.nothing.hunnaz.clustr.EventDB.Event;
 
 /**
  *
@@ -27,6 +39,11 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     EditText address;
     TextView information;
 
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentFirebaseUser;
+    private DatabaseReference mDatabase;
+
+    private static final String TAG = "AddEventFragment";
 
     private void switchIntent(Class name){
         Intent myIntent = new Intent(this.getContext(), name);
@@ -34,8 +51,9 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     }
 
     // TODO - Does nothing until the DB is implemented
-    private void addEventToDatabase(String name, String des, String cost, String age, String date, String capacity, String address){
-
+    private void addEventToDatabase(Event event){
+        Log.d(TAG, "create event: " + event.getTitle());
+        mDatabase.child("events").push().setValue(event);
     }
 
     // TODO - Need to do this
@@ -44,6 +62,8 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         int len = name.length();
         boolean b = (len == 0);
         if(b) { retVal = "ERROR: A name must be entered for the event"; }
+
+        //TODO - Need to also check that the user does not already have one with same name (used as ID)
         return retVal;
     }
 
@@ -87,6 +107,14 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         }
         return retVal;    }
 
+    private static String validateUser(String user){
+        String retVal = "";
+        if(user == null || user.length() == 0) {
+            retVal = "ERROR: Must be logged in";
+        }
+        return retVal;    }
+
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -116,9 +144,24 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                 if(errorMessage.length() == 0){
                     errorMessage = validateAddress(capacityStr);
                 }
+                if(errorMessage.length() == 0){
+                    String user = "";
+                    try {
+                        user = currentFirebaseUser.getUid();
+                    } catch (Exception e){
+                        user = "";
+                    }
+                    errorMessage = validateUser(user);
+                }
                 // Assume description can be empty
                 if(errorMessage.length() == 0) {
-                    addEventToDatabase(nameStr, descriptionStr, costStr, ageStr, dateStr, capacityStr, addressStr);
+                    Date day = new Date(dateStr);
+                    int capacityDone = Integer.parseInt(capacityStr);
+                    double costDone = Double.parseDouble(costStr);
+                    int ageDone = Integer.parseInt(ageStr);
+                    String currentUser = currentFirebaseUser.getUid();  // TODO - Need to get this up and running
+                    Event newEvent = new Event(nameStr, addressStr, capacityDone, day.toString(), descriptionStr, costDone, ageDone, currentUser);
+                    addEventToDatabase(newEvent);
                     switchIntent(HomeActivity.class);
                 } else {
                     information.setText(errorMessage);
@@ -138,6 +181,10 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
             switchIntent(ChangePasswordActivity.class); // Change this to the landscape version
         }
+
+        // Initialize auth and database
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         Button btnAdd = (Button) v.findViewById(R.id.backButton);
         btnAdd.setOnClickListener(this);

@@ -29,6 +29,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         UserSingleton singleton = UserSingleton.get(this.getContext());
         boolean validLogin = singleton.isValidLogin(username, password);
         String retVal = "";
+        validLogin = true; //TODO - Delete this to get the login up and running
         if(validLogin) {
             UserPrefs.logInUser(username, this.getContext());
             switchIntent(HomeActivity.class);

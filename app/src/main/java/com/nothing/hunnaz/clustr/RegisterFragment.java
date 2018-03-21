@@ -61,7 +61,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
         // Text Views
         usernameTextEntry = (EditText) v.findViewById(R.id.userNameRegister);
-        emailTextEntry = (EditText) v.findViewById(R.id.emailRegister);
+        emailTextEntry = (EditText) v.findViewById(R.id.inEmailRegister);
         passwordTextEntry = (EditText) v.findViewById(R.id.passwordRegister);
         passwordConfirmTextEntry = (EditText) v.findViewById(R.id.passwordRegisterConfirm);
         dobTextEntry =  (EditText) v.findViewById(R.id.dateOfBirthRegister);
@@ -80,13 +80,13 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
      * Queries the database for the first user with username equal to @param username
      */
     private  boolean confirmUsername(String username){
-        final boolean[] result = {false};
+        final boolean[] result = {true};
         mDatabase.child("users").orderByChild("username").equalTo(username).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChildren()) {
                     // username already exists
-                    result[0] = true;
+                    result[0] = false;
                 }
             }
 
