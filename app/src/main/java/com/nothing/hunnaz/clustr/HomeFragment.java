@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * Created by Zane Clymer on 2/28/2018.
  */
-public class HomeFragment extends Fragment implements View.OnClickListener{
+public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private boolean isLoggedIn = false;
 
