@@ -7,4 +7,9 @@
     <string name="title_activity_user_profile">UserProfileActivity</string>
     <string name="title_activity_list">ListActivity</string>
     <string name="title_activity_change_password">ChangePasswordActivity</string>
+    <string name="nav_title_welcome">Welcome</string>
+    <string name="nav_menu_account">Account</string>
+    <string name="nav_menu_logout">Logout</string>
+    <string name="nav_menu_exit">Exit</string>
+
 </resources>

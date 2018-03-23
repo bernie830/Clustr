@@ -1,11 +1,19 @@
 package com.nothing.hunnaz.clustr;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +42,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private DatabaseReference dbEvents;
 
+    private DrawerLayout mDrawerLayout;
+
+
     private void switchIntent(Class name){
         Intent myIntent = new Intent(this.getContext(), name);
 
@@ -54,9 +65,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         ViewGroup v = (ViewGroup) view.getParent();
         switch (view.getId()) {
-            case R.id.accountButton:
-                switchIntent(AccountActivity.class);
-                break;
             case R.id.testShow:
                 // TODO - This needs to be the event that was clicked
                 Event event = new Event("Fake Event","Here",1,"11/11/11","This is a cool event for being fake.",1,1,"Me", 12);
@@ -66,6 +74,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 switchIntent(AddEventActivity.class);
                 break;
         }
+    }
+
+    private void logoutUser(){
+        UserPrefs.logOutUser(super.getContext());
+        switchIntent(WelcomeActivity.class);
     }
 
     @Override
@@ -81,12 +94,42 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             switchIntent(HomeActivity.class); // Change this to the landscape version
         }
 
-        Button btnAdd = (Button) v.findViewById(R.id.accountButton);
+        Button btnAdd = (Button) v.findViewById(R.id.testShow);
         btnAdd.setOnClickListener(this);
 
+            mDrawerLayout = v.findViewById(R.id.drawer_layout);
 
-        btnAdd = (Button) v.findViewById(R.id.testShow);
-        btnAdd.setOnClickListener(this);
+            NavigationView navigationView = v.findViewById(R.id.nav_view);
+            navigationView.setNavigationItemSelectedListener(
+                    new NavigationView.OnNavigationItemSelectedListener() {
+                        @Override
+                        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                            // set item as selected to persist highlight
+                            menuItem.setChecked(true);
+                            // close drawer when item is tapped
+                            mDrawerLayout.closeDrawers();
+
+                            // Add code here to update the UI based on the item selected
+                            // For example, swap UI fragments here
+                            switch(menuItem.getItemId()){
+                                case R.id.nav_account:
+                                    switchIntent(AccountActivity.class);
+                                    break;
+                                case R.id.nav_logout:
+                                    logoutUser();
+                                    break;
+                                case R.id.nav_exit:
+                                    getActivity().moveTaskToBack(true);
+                                    getActivity().finish();
+                                    break;
+                            }
+
+
+
+                            return true;
+                        }
+                    }
+            );
 
         dbEvents = FirebaseDatabase.getInstance().getReference("events");
         dbEvents.addValueEventListener(new ValueEventListener() {
@@ -137,6 +180,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 //        dbEvents.push().setValue(new Event("Added from code", "your mom's house", 7, "022818", "fun time", 25, 18, "-A"));
             FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.addEventButton);
             fab.setOnClickListener(this);
+
+
 
         return v;
     }
