@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
@@ -16,9 +17,18 @@ import android.widget.ImageView;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.nothing.hunnaz.clustr.EventDB.Event;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -28,6 +38,9 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
 
 
     private Event event;
+    private DatabaseReference mDatabase;
+    private static final String TAG = "ItemFragment";
+
     private void closeFragment(){
         getFragmentManager().popBackStackImmediate();
     }
@@ -45,6 +58,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         args.putInt("age", e.getAge());
         args.putString("creator", e.getCreatorId());
         args.putInt("numAttending", e.getNumCurrentAttending());
+        args.putString("key", e.getKey());
         frag.setArguments(args);
         return frag;
     }
@@ -54,6 +68,44 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         startActivity(myIntent);
     }
 
+    private void addUserToGuestList(){
+
+        final String currUser = "TestUser";
+        String eventID = event.getKey();
+        Log.d(TAG, "rsvp event: " + event.getTitle());
+
+        final ArrayList<String> allEvents = new ArrayList<>();
+
+        DatabaseReference ref = mDatabase.child("attending").child(currUser);
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                try{
+                    Iterator<DataSnapshot> dataSnapshots = snapshot.getChildren().iterator();
+                    while (dataSnapshots.hasNext()) {
+                        DataSnapshot dataSnapshotChild = dataSnapshots.next();
+                        String str = dataSnapshotChild.getValue(String.class);
+                        if(!allEvents.contains(str)){
+                            allEvents.add(str);
+                        }
+                    }
+                } catch (Throwable e) {
+                    Log.d(TAG, "Error getting events");
+                }
+                if(allEvents.size() > 0){
+                    Log.d(TAG, "Got events");
+                    mDatabase.child("attending").child(currUser).setValue(allEvents);
+                }
+            }
+            @Override public void onCancelled(DatabaseError error) { }
+        });
+        if(!allEvents.contains(eventID)){
+            allEvents.add(eventID);
+        }
+        mDatabase.child("attending").child(currUser).setValue(allEvents);
+    }
+
     @Override
     public void onClick(View view) {
         ViewGroup v = (ViewGroup) view.getParent();
@@ -61,6 +113,8 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
             case R.id.exitFab:
                 closeFragment();
                 break;
+            case R.id.rsvpButton:
+                addUserToGuestList();
         }
     }
 
@@ -102,8 +156,11 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         int age = this.getArguments().getInt("age");
         String creator = this.getArguments().getString("creator");
         int num = this.getArguments().getInt("numAttending");
+        String key = this.getArguments().getString("key");
 
         event = new Event(title, location, capacity, date, description, cost, age, creator, num);
+        event.setKey(key);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         //ImageView image = (ImageView) v.findViewById(R.id.eventImage);
         //image.setImageResource(R.mipmap.missing_img_round);
@@ -112,6 +169,9 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
 
         FloatingActionButton exit = (FloatingActionButton) v.findViewById(R.id.exitFab);
         exit.setOnClickListener(this);
+
+        Button rsvp = (Button) v.findViewById(R.id.rsvpButton);
+        rsvp.setOnClickListener(this);
 
         return v;
     }
