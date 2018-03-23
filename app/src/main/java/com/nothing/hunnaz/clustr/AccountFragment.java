@@ -15,10 +15,6 @@ import android.widget.Button;
  *
  */
 public class AccountFragment extends Fragment implements View.OnClickListener {
-    private void logoutUser(){
-        UserPrefs.logOutUser(super.getContext());
-        switchIntent(WelcomeActivity.class);
-    }
 
     private void switchIntent(Class name){
         Intent myIntent = new Intent(this.getContext(), name);
@@ -32,9 +28,6 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.logoutButton:
-                logoutUser();
-                break;
             case R.id.backButton:
                 switchIntent(WelcomeActivity.class);
                 break;
@@ -60,10 +53,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
             switchIntent(AccountActivity.class); // Change this to the landscape version
         }
 
-        Button btnAdd = (Button) v.findViewById(R.id.logoutButton);
-        btnAdd.setOnClickListener(this);
-
-        btnAdd = (Button) v.findViewById(R.id.backButton);
+        Button btnAdd = (Button) v.findViewById(R.id.backButton);
         btnAdd.setOnClickListener(this);
 
         btnAdd = (Button) v.findViewById(R.id.changePasswordButton);
