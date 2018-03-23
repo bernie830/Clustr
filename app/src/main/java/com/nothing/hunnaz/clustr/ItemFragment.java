@@ -68,8 +68,50 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         startActivity(myIntent);
     }
 
-    private void addUserToGuestList(){
+    private void addItemToDB(final String item, final String table, final String childOfDB){
+        final ArrayList<String> allItems = new ArrayList<>();
 
+        DatabaseReference ref = mDatabase.child(table).child(childOfDB);
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                try{
+                    Iterator<DataSnapshot> dataSnapshots = snapshot.getChildren().iterator();
+                    while (dataSnapshots.hasNext()) {
+                        DataSnapshot dataSnapshotChild = dataSnapshots.next();
+                        String str = dataSnapshotChild.getValue(String.class);
+                        if(!allItems.contains(str)){
+                            allItems.add(str);
+                        }
+                    }
+                } catch (Throwable e) {
+                    Log.d(TAG, "Error getting items");
+                }
+                if(allItems.size() > 0){
+                    Log.d(TAG, "Got events");
+                    mDatabase.child(table).child(childOfDB).setValue(allItems);
+                }
+            }
+            @Override public void onCancelled(DatabaseError error) { }
+        });
+        if(!allItems.contains(item)){
+            allItems.add(item);
+        }
+        mDatabase.child(table).child(childOfDB).setValue(allItems);
+    }
+
+    private void addUserToGuestList(final String currUser) {
+
+        String eventID = event.getKey();
+        String attendingTable = "attending";
+        String guestTable = "guestlist";
+        mDatabase.child(guestTable).child(currUser).setValue("Hello WOrld");
+        addItemToDB(currUser, guestTable, eventID);
+        //mDatabase.child(table).child(currUser).push();
+    }
+
+    private void addEventToAttending(){
         final String currUser = "TestUser";
         String eventID = event.getKey();
         Log.d(TAG, "rsvp event: " + event.getTitle());
@@ -114,7 +156,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
                 closeFragment();
                 break;
             case R.id.rsvpButton:
-                addUserToGuestList();
+                addUserToGuestList("TestUser");
         }
     }
 
