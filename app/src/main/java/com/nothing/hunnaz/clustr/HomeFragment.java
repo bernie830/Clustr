@@ -21,6 +21,8 @@ import android.widget.Button;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,13 +39,10 @@ import java.util.List;
  * Created by Zane Clymer on 2/28/2018.
  */
 public class HomeFragment extends Fragment implements View.OnClickListener {
-
-    private boolean isLoggedIn = false;
-
     private DatabaseReference dbEvents;
+    private FirebaseAuth mAuth;
 
     private DrawerLayout mDrawerLayout;
-
 
     private void switchIntent(Class name){
         Intent myIntent = new Intent(this.getContext(), name);
@@ -84,18 +83,20 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if(!UserPrefs.isLoggedIn(this.getContext())){
+        // Firebase
+        mAuth = FirebaseAuth.getInstance();
+
+        if(mAuth.getCurrentUser() == null){
             switchIntent(LoginActivity.class);
         }
         View v = inflater.inflate(R.layout.fragment_home, container, false);
-        int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
 
+        int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
         if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
             switchIntent(HomeActivity.class); // Change this to the landscape version
         }
 
-        Button btnAdd = (Button) v.findViewById(R.id.testShow);
-        btnAdd.setOnClickListener(this);
+        v.findViewById(R.id.testShow).setOnClickListener(this);
 
             mDrawerLayout = v.findViewById(R.id.drawer_layout);
 
