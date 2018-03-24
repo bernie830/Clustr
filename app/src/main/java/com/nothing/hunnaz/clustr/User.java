@@ -1,4 +1,4 @@
-package com.nothing.hunnaz.clustr.UserDB;
+package com.nothing.hunnaz.clustr;
 
 import org.apache.commons.lang3.builder.*;
 
