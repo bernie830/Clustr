@@ -163,7 +163,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.d(TAG, "createAccount: failure", task.getException());
-                    Toast.makeText(getActivity(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     // TODO: Clear text views if auth fails?
                 }
             }
@@ -184,7 +184,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.d(TAG, "signInWithEmail:failure", task.getException());
-                    Toast.makeText(getActivity(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });

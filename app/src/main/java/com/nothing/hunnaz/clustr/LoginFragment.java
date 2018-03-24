@@ -100,7 +100,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.d(TAG, "signInWithEmail: failure", task.getException());
-                    Toast.makeText(getActivity(), "Login failed.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     newInfo = "Login failed.";
                 }
             }
@@ -142,7 +142,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 switchIntent(RegisterActivity.class);
                 break;
             case R.id.backButton:
-                switchIntent(WelcomeActivity.class);//TODO: Change back button to be in the App Bar
+                switchIntent(WelcomeActivity.class); //TODO: Change back button to be in the App Bar
                 break;
         }
     }
