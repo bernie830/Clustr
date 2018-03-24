@@ -179,7 +179,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-//        dbEvents.push().setValue(new Event("Added from code", "your mom's house", 7, "022818", "fun time", 25, 18, "-A"));
             FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.addEventButton);
             fab.setOnClickListener(this);
 

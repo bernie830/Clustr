@@ -10,6 +10,12 @@ public class Time {
     private int minute;
     private boolean isInAM;
 
+    public Time(){
+        this.hour = 12;
+        this.minute = 1;
+        this.isInAM = true;
+    }
+
     public Time(int hour, int minute){
         if(hour > 12){
             this.isInAM = false;
@@ -44,10 +50,14 @@ public class Time {
 
     public String toString(){
         String retVal = "";
+        String minute = "" + this.minute;
+        if(this.minute < 10){
+            minute = "0" + this.minute;
+        }
         if(this.isInAM){
-            retVal = "" + this.hour + ":" + this.minute + " AM";
+            retVal = "" + this.hour + ":" + minute + " AM";
         } else {
-            retVal = "" + this.hour + ":" + this.minute + " PM";
+            retVal = "" + this.hour + ":" + minute + " PM";
         }
         return retVal;
     }
