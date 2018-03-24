@@ -15,6 +15,7 @@ public class Event {
     private int age;
     private String creator;
     private int currAttending;
+    private String key;
     // TODO: implement pictureIDField and guestListField
 
     public Event(String title, String location, int capacity, String date, String description, double cost, int age, String creatorID, int currAttendance) {
@@ -27,6 +28,7 @@ public class Event {
         this.age = age;
         this.creator = creatorID;
         this.currAttending = currAttendance;
+        this.key = "";
     }
     
     public Event() {}
@@ -103,6 +105,15 @@ public class Event {
     public void setNumCurrentAttending(int num) {
         this.currAttending = num;
     }
+
+    public String getKey() {
+        return this.key;
+    }
+
+    public void setKey(String k) {
+        this.key = k;
+    }
+
 
     @Override
     public String toString() {

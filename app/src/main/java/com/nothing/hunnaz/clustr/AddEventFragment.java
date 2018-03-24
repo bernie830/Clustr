@@ -52,7 +52,9 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
     private void addEventToDatabase(Event event){
         Log.d(TAG, "create event: " + event.getTitle());
-        mDatabase.child("events").push().setValue(event);
+        String name = mDatabase.child("events").push().getKey();
+        event.setKey(name);
+        mDatabase.child("events").child(name).setValue(event);
     }
 
     private static String validateName(String name){

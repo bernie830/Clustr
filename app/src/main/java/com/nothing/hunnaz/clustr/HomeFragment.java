@@ -67,6 +67,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             case R.id.testShow:
                 // TODO - This needs to be the event that was clicked
                 Event event = new Event("Fake Event","Here",1,"11/11/11","This is a cool event for being fake.",1,1,"Me", 12);
+                event.setKey("LA8thisisatestkey93w94");
                 showItem(event);
                 break;
             case R.id.addEventButton:
