@@ -92,13 +92,19 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         });
     }
 
-    private void addUserToGuestList(final String currUser) {
+    private void addUserToGuestList(final String currUser, View v) {
         String eventID = event.getKey();
         String attendingTable = "attending";
         String guestTable = "guestlist";
 
         addItemToDB(eventID, attendingTable, currUser);
         addItemToDB(currUser, guestTable, eventID);
+        event.setNumCurrentAttending(event.getNumCurrentAttending() + 1);
+        String str =  "Open Spots Remaining: " + Integer.toString(event.getCapacity() - event.getNumCurrentAttending());
+        TextView text = (TextView) v.findViewById(R.id.eventOpenSpots);
+        if(text != null){
+            text.setText(str);
+        }
     }
 
     private void removeItemFromDB(final String item, final String table, final String childOfDB){
@@ -125,13 +131,19 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         });
     }
 
-    private void removeUserFromGuestList(final String currUser) {
+    private void removeUserFromGuestList(final String currUser, View v) {
         String eventID = event.getKey();
         String attendingTable = "attending";
         String guestTable = "guestlist";
 
         removeItemFromDB(eventID, attendingTable, currUser);
         removeItemFromDB(currUser, guestTable, eventID);
+        event.setNumCurrentAttending(event.getNumCurrentAttending() - 1);
+        String str =  "Open Spots Remaining: " + Integer.toString(event.getCapacity() - event.getNumCurrentAttending());
+        TextView text = (TextView) v.findViewById(R.id.eventOpenSpots);
+        if(text != null){
+            text.setText(str);
+        }
     }
 
 
@@ -146,10 +158,10 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
             case R.id.rsvpButton:
                 Button b = (Button) view;
                 if(!b.getText().equals("Already RSVP'd! Decline?")) {
-                    addUserToGuestList(currUser);
+                    addUserToGuestList(currUser, v);
                     b.setText("Already RSVP'd! Decline?");
                 } else {
-                    removeUserFromGuestList(currUser);
+                    removeUserFromGuestList(currUser, v);
                     b.setText("RSVP");
                 }
         }
@@ -174,33 +186,41 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         age.setText(ageStr);
         TextView openSpots = (TextView) v.findViewById(R.id.eventOpenSpots);
         String openSpotsStr = "Open Spots Remaining: " + Integer.toString(event.getCapacity() - event.getNumCurrentAttending());
-        age.setText(openSpotsStr);
+        openSpots.setText(openSpotsStr);
 
     }
 
-    private void setText(final Button b, final String currUser, final String eventID){
-        mDatabase.child("attending").child(currUser).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                boolean alreadyIn = false;
-                for (DataSnapshot child : snapshot.getChildren()) {
-                    String data = child.getValue().toString();
-                    if(data.equals(eventID)){
-                        alreadyIn = true;
+    private void setText(final Button b, final String currUser, final Event event){
+        final String eventID = event.getKey();
+        b.setClickable(true);
+            mDatabase.child("attending").child(currUser).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    boolean alreadyIn = false;
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        String data = child.getValue().toString();
+                        if (data.equals(eventID)) {
+                            alreadyIn = true;
+                        }
+                        Log.d(TAG, child.getValue().toString());
                     }
-                    Log.d(TAG, child.getValue().toString());
-                }
-                if(alreadyIn){
-                    b.setText("Already RSVP'd! Decline?");
-                } else {
-                    b.setText("RSVP");
+                    if (alreadyIn) {
+                        b.setText("Already RSVP'd! Decline?");
+                    } else {
+                        if(event.getCapacity() - event.getNumCurrentAttending() > 0) {
+                            b.setText("RSVP");
+                        } else {
+                            b.setText("Event Full");
+                            b.setClickable(false);
+                        }
+                    }
+
                 }
 
-            }
-            @Override
-            public void onCancelled(DatabaseError error) {
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError error) {
+                }
+            });
     }
 
     @Override
@@ -236,7 +256,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         rsvp.setOnClickListener(this);
 
         String currUser = "TestUser"; // TODO - Needs to be real logged in user
-        setText(rsvp, currUser, event.getKey());
+        setText(rsvp, currUser, event);
 
         return v;
     }
