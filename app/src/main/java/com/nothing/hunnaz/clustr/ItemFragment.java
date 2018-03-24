@@ -29,6 +29,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 
 /**
@@ -69,94 +70,88 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
     }
 
     private void addItemToDB(final String item, final String table, final String childOfDB){
-        final ArrayList<String> allItems = new ArrayList<>();
 
-        DatabaseReference ref = mDatabase.child(table).child(childOfDB);
-
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child(table).child(childOfDB).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                try{
-                    Iterator<DataSnapshot> dataSnapshots = snapshot.getChildren().iterator();
-                    while (dataSnapshots.hasNext()) {
-                        DataSnapshot dataSnapshotChild = dataSnapshots.next();
-                        String str = dataSnapshotChild.getValue(String.class);
-                        if(!allItems.contains(str)){
-                            allItems.add(str);
-                        }
+                boolean alreadyIn = false;
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    String data = child.getValue().toString();
+                    if(data.equals(item)){
+                        alreadyIn = true;
                     }
-                } catch (Throwable e) {
-                    Log.d(TAG, "Error getting items");
+                    Log.d(TAG, child.getValue().toString());
                 }
-                if(allItems.size() > 0){
-                    Log.d(TAG, "Got events");
-                    mDatabase.child(table).child(childOfDB).setValue(allItems);
+                if(!alreadyIn) {
+                    mDatabase.child(table).child(childOfDB).push().setValue(item);
                 }
             }
-            @Override public void onCancelled(DatabaseError error) { }
+            @Override
+            public void onCancelled(DatabaseError error) {
+            }
         });
-        if(!allItems.contains(item)){
-            allItems.add(item);
-        }
-        mDatabase.child(table).child(childOfDB).setValue(allItems);
     }
 
     private void addUserToGuestList(final String currUser) {
-
         String eventID = event.getKey();
         String attendingTable = "attending";
         String guestTable = "guestlist";
-        mDatabase.child(guestTable).child(currUser).setValue("Hello WOrld");
+
+        addItemToDB(eventID, attendingTable, currUser);
         addItemToDB(currUser, guestTable, eventID);
-        //mDatabase.child(table).child(currUser).push();
     }
 
-    private void addEventToAttending(){
-        final String currUser = "TestUser";
-        String eventID = event.getKey();
-        Log.d(TAG, "rsvp event: " + event.getTitle());
-
-        final ArrayList<String> allEvents = new ArrayList<>();
-
-        DatabaseReference ref = mDatabase.child("attending").child(currUser);
-
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void removeItemFromDB(final String item, final String table, final String childOfDB){
+        mDatabase.child(table).child(childOfDB).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                try{
-                    Iterator<DataSnapshot> dataSnapshots = snapshot.getChildren().iterator();
-                    while (dataSnapshots.hasNext()) {
-                        DataSnapshot dataSnapshotChild = dataSnapshots.next();
-                        String str = dataSnapshotChild.getValue(String.class);
-                        if(!allEvents.contains(str)){
-                            allEvents.add(str);
-                        }
+                boolean alreadyIn = false;
+                String key = "";
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    String data = child.getValue().toString();
+                    if(data.equals(item)){
+                        alreadyIn = true;
+                        key = child.getKey();
                     }
-                } catch (Throwable e) {
-                    Log.d(TAG, "Error getting events");
+                    Log.d(TAG, child.getValue().toString());
                 }
-                if(allEvents.size() > 0){
-                    Log.d(TAG, "Got events");
-                    mDatabase.child("attending").child(currUser).setValue(allEvents);
+                if(alreadyIn) {
+                    mDatabase.child(table).child(childOfDB).child(key).removeValue();
                 }
             }
-            @Override public void onCancelled(DatabaseError error) { }
+            @Override
+            public void onCancelled(DatabaseError error) {
+            }
         });
-        if(!allEvents.contains(eventID)){
-            allEvents.add(eventID);
-        }
-        mDatabase.child("attending").child(currUser).setValue(allEvents);
     }
+
+    private void removeUserFromGuestList(final String currUser) {
+        String eventID = event.getKey();
+        String attendingTable = "attending";
+        String guestTable = "guestlist";
+
+        removeItemFromDB(eventID, attendingTable, currUser);
+        removeItemFromDB(currUser, guestTable, eventID);
+    }
+
 
     @Override
     public void onClick(View view) {
+        final String currUser = "TestUser"; // TODO - Make this the current user
         ViewGroup v = (ViewGroup) view.getParent();
         switch (view.getId()) {
             case R.id.exitFab:
                 closeFragment();
                 break;
             case R.id.rsvpButton:
-                addUserToGuestList("TestUser");
+                Button b = (Button) view;
+                if(!b.getText().equals("Already RSVP'd! Decline?")) {
+                    addUserToGuestList(currUser);
+                    b.setText("Already RSVP'd! Decline?");
+                } else {
+                    removeUserFromGuestList(currUser);
+                    b.setText("RSVP");
+                }
         }
     }
 
@@ -181,6 +176,31 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         String openSpotsStr = "Open Spots Remaining: " + Integer.toString(event.getCapacity() - event.getNumCurrentAttending());
         age.setText(openSpotsStr);
 
+    }
+
+    private void setText(final Button b, final String currUser, final String eventID){
+        mDatabase.child("attending").child(currUser).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                boolean alreadyIn = false;
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    String data = child.getValue().toString();
+                    if(data.equals(eventID)){
+                        alreadyIn = true;
+                    }
+                    Log.d(TAG, child.getValue().toString());
+                }
+                if(alreadyIn){
+                    b.setText("Already RSVP'd! Decline?");
+                } else {
+                    b.setText("RSVP");
+                }
+
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+            }
+        });
     }
 
     @Override
@@ -212,8 +232,11 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         FloatingActionButton exit = (FloatingActionButton) v.findViewById(R.id.exitFab);
         exit.setOnClickListener(this);
 
-        Button rsvp = (Button) v.findViewById(R.id.rsvpButton);
+        final Button rsvp = (Button) v.findViewById(R.id.rsvpButton);
         rsvp.setOnClickListener(this);
+
+        String currUser = "TestUser"; // TODO - Needs to be real logged in user
+        setText(rsvp, currUser, event.getKey());
 
         return v;
     }
