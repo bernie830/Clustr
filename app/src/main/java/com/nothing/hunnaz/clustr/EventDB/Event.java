@@ -1,5 +1,7 @@
 package com.nothing.hunnaz.clustr.EventDB;
 
+import com.nothing.hunnaz.clustr.Time;
+
 import org.apache.commons.lang3.builder.*;
 
 /**
@@ -16,9 +18,10 @@ public class Event {
     private String creator;
     private int currAttending;
     private String key;
+    private Time time;
     // TODO: implement pictureIDField and guestListField
 
-    public Event(String title, String location, int capacity, String date, String description, double cost, int age, String creatorID, int currAttendance) {
+    public Event(String title, String location, int capacity, String date, String description, double cost, int age, String creatorID, int currAttendance, Time t) {
         this.title = title;
         this.location = location;
         this.capacity = capacity;
@@ -29,6 +32,7 @@ public class Event {
         this.creator = creatorID;
         this.currAttending = currAttendance;
         this.key = "";
+        this.time = t;
     }
     
     public Event() {}
@@ -112,6 +116,14 @@ public class Event {
 
     public void setKey(String k) {
         this.key = k;
+    }
+
+    public Time getTime() {
+        return this.time;
+    }
+
+    public void setTime(Time k) {
+        this.time = k;
     }
 
 

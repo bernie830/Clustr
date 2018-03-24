@@ -60,6 +60,9 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         args.putString("creator", e.getCreatorId());
         args.putInt("numAttending", e.getNumCurrentAttending());
         args.putString("key", e.getKey());
+        Time t = e.getTime();
+        args.putInt("hour", t.get24Hour());
+        args.putInt("minute", t.getMinute());
         frag.setArguments(args);
         return frag;
     }
@@ -187,7 +190,9 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         TextView openSpots = (TextView) v.findViewById(R.id.eventOpenSpots);
         String openSpotsStr = "Open Spots Remaining: " + Integer.toString(event.getCapacity() - event.getNumCurrentAttending());
         openSpots.setText(openSpotsStr);
-
+        String time = "Time: " + event.getTime().toString();
+        TextView timeView = (TextView) v.findViewById(R.id.eventTime);
+        timeView.setText(time);
     }
 
     private void setText(final Button b, final String currUser, final Event event){
@@ -239,8 +244,11 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         String creator = this.getArguments().getString("creator");
         int num = this.getArguments().getInt("numAttending");
         String key = this.getArguments().getString("key");
+        int hour = this.getArguments().getInt("hour");
+        int minute = this.getArguments().getInt("minute");
 
-        event = new Event(title, location, capacity, date, description, cost, age, creator, num);
+        Time t = new Time(hour, minute);
+        event = new Event(title, location, capacity, date, description, cost, age, creator, num, t);
         event.setKey(key);
         mDatabase = FirebaseDatabase.getInstance().getReference();
 

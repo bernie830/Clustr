@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.CursorWrapper;
 
 import com.nothing.hunnaz.clustr.EventDB.EventDBSchema;
+import com.nothing.hunnaz.clustr.Time;
 
 /**
  * Created by adamcchampion on 2017/08/04.
@@ -24,7 +25,7 @@ public class EventCursorWrapper extends CursorWrapper {
         int age = (int)getLong(getColumnIndex(EventDBSchema.EventsTable.Cols.AGE));
         String creator = getString(getColumnIndex(EventDBSchema.EventsTable.Cols.CREATOR));
 
-        Event account = new Event(title, location, capacity, date, description, cost, age, creator, 0);
+        Event account = new Event(title, location, capacity, date, description, cost, age, creator, 0, new Time(11,11));
 
         return account;
     }
