@@ -3,6 +3,7 @@ package com.nothing.hunnaz.clustr;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -117,11 +118,16 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         return retVal;
     }
 
-    private static String validateAddress(String address){
+    private String validateAddress(String address){
         String retVal = "";
         int len = address.length();
         boolean b = (len == 0);
         if(b) { retVal = "ERROR: An address must be entered for the event"; }
+        EventAddress add = new EventAddress(address, this.getContext());
+        Location loc = add.getLocation();
+        if(loc.getLatitude() == 0.0 && loc.getLongitude() == 0.0){
+            retVal = "The entered address was invalid. Must be a valid location.";
+        }
         return retVal;    }
 
     private static String validateUser(String user){
