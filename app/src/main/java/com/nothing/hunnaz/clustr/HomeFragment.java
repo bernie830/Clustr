@@ -1,6 +1,5 @@
 package com.nothing.hunnaz.clustr;
 
-import android.*;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,6 +10,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -19,9 +20,6 @@ import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
-
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -60,9 +58,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         mLocation = LocationServices.getFusedLocationProviderClient(getActivity());
         getLocation();
 
+        // User
         if(mAuth.getCurrentUser() == null){
             switchIntent(LoginActivity.class);
         }
+
+        // View and rotation
         View v = inflater.inflate(R.layout.fragment_home, container, false);
 
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
@@ -98,65 +99,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                                 getActivity().finish();
                                 break;
                         }
-
-
-
                         return true;
                     }
                 }
         );
 
-        dbEvents = FirebaseDatabase.getInstance().getReference("events");
-        dbEvents.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-//              System.out.println(dataSnapshot.getValue());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.out.println("The read failed: " + databaseError.getCode());
-            }
-        });
-
-        final ArrayList<Event> allEvents = new ArrayList<>();
-
-        dbEvents.orderByKey().addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                allEvents.add(dataSnapshot.getValue(Event.class));
-                System.out.println("%%%%%%%" + allEvents.size());
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Event event = dataSnapshot.getValue(Event.class);
-                System.out.println("***************");
-                System.out.println(event.toString());
-                System.out.println("***************");
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-//        dbEvents.push().setValue(new Event("Added from code", "your mom's house", 7, "022818", "fun time", 25, 18, "-A"));
         FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.addEventButton);
         fab.setOnClickListener(this);
-
-
 
         return v;
     }
@@ -190,8 +139,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     public void onSuccess(Location location) {
                         if (location != null) {
                             CurrentLocation = location;
+                            Log.d(TAG, "Current Location\n" + location.toString());
                         }
-                        Log.d(TAG, "Current Location\n" + location.toString());
                     }
                 });
         }
@@ -244,7 +193,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.testShow:
                 // TODO - This needs to be the event that was clicked
-                Event event = new Event("Fake Event","Here",1,"11/11/11","This is a cool event for being fake.",1,1,"Me", 12);
+                Event event = new Event("Fake Event","Here",1,"11/11/11","This is a cool event for being fake.",1,1,"Me", 0, new Time(13, 11));
                 event.setKey("LA8thisisatestkey93w94");
                 showItem(event);
                 break;
@@ -258,4 +207,5 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         UserPrefs.logOutUser(super.getContext());
         switchIntent(WelcomeActivity.class);
     }
+
 }

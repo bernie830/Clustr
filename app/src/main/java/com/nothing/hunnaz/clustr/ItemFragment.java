@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -19,8 +18,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 
 /**
@@ -42,7 +39,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         // Supply index input as an argument.
         Bundle args = new Bundle();
         args.putString("title", e.getTitle());
-        args.putString("location", e.getLocation());
+        args.putString("location", e.getAddress());
         args.putInt("capacity", e.getCapacity());
         args.putString("date", e.getDate());
         args.putString("description", e.getDescription());
@@ -51,6 +48,9 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         args.putString("creator", e.getCreatorId());
         args.putInt("numAttending", e.getNumCurrentAttending());
         args.putString("key", e.getKey());
+        Time t = e.getTime();
+        args.putInt("hour", t.get24Hour());
+        args.putInt("minute", t.getMinute());
         frag.setArguments(args);
         return frag;
     }
@@ -60,53 +60,101 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         startActivity(myIntent);
     }
 
-    private void addUserToGuestList(){
+    private void addItemToDB(final String item, final String table, final String childOfDB){
 
-        final String currUser = "TestUser";
-        String eventID = event.getKey();
-        Log.d(TAG, "rsvp event: " + event.getTitle());
-
-        final ArrayList<String> allEvents = new ArrayList<>();
-
-        DatabaseReference ref = mDatabase.child("attending").child(currUser);
-
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child(table).child(childOfDB).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                try{
-                    Iterator<DataSnapshot> dataSnapshots = snapshot.getChildren().iterator();
-                    while (dataSnapshots.hasNext()) {
-                        DataSnapshot dataSnapshotChild = dataSnapshots.next();
-                        String str = dataSnapshotChild.getValue(String.class);
-                        if(!allEvents.contains(str)){
-                            allEvents.add(str);
-                        }
+                boolean alreadyIn = false;
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    String data = child.getValue().toString();
+                    if(data.equals(item)){
+                        alreadyIn = true;
                     }
-                } catch (Throwable e) {
-                    Log.d(TAG, "Error getting events");
+                    Log.d(TAG, child.getValue().toString());
                 }
-                if(allEvents.size() > 0){
-                    Log.d(TAG, "Got events");
-                    mDatabase.child("attending").child(currUser).setValue(allEvents);
+                if(!alreadyIn) {
+                    mDatabase.child(table).child(childOfDB).push().setValue(item);
                 }
             }
-            @Override public void onCancelled(DatabaseError error) { }
+            @Override
+            public void onCancelled(DatabaseError error) {
+            }
         });
-        if(!allEvents.contains(eventID)){
-            allEvents.add(eventID);
-        }
-        mDatabase.child("attending").child(currUser).setValue(allEvents);
     }
+
+    private void addUserToGuestList(final String currUser, View v) {
+        String eventID = event.getKey();
+        String attendingTable = "attending";
+        String guestTable = "guestlist";
+
+        addItemToDB(eventID, attendingTable, currUser);
+        addItemToDB(currUser, guestTable, eventID);
+        event.setNumCurrentAttending(event.getNumCurrentAttending() + 1);
+        String str =  "Open Spots Remaining: " + Integer.toString(event.getCapacity() - event.getNumCurrentAttending());
+        TextView text = (TextView) v.findViewById(R.id.eventOpenSpots);
+        if(text != null){
+            text.setText(str);
+        }
+    }
+
+    private void removeItemFromDB(final String item, final String table, final String childOfDB){
+        mDatabase.child(table).child(childOfDB).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                boolean alreadyIn = false;
+                String key = "";
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    String data = child.getValue().toString();
+                    if(data.equals(item)){
+                        alreadyIn = true;
+                        key = child.getKey();
+                    }
+                    Log.d(TAG, child.getValue().toString());
+                }
+                if(alreadyIn) {
+                    mDatabase.child(table).child(childOfDB).child(key).removeValue();
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+            }
+        });
+    }
+
+    private void removeUserFromGuestList(final String currUser, View v) {
+        String eventID = event.getKey();
+        String attendingTable = "attending";
+        String guestTable = "guestlist";
+
+        removeItemFromDB(eventID, attendingTable, currUser);
+        removeItemFromDB(currUser, guestTable, eventID);
+        event.setNumCurrentAttending(event.getNumCurrentAttending() - 1);
+        String str =  "Open Spots Remaining: " + Integer.toString(event.getCapacity() - event.getNumCurrentAttending());
+        TextView text = (TextView) v.findViewById(R.id.eventOpenSpots);
+        if(text != null){
+            text.setText(str);
+        }
+    }
+
 
     @Override
     public void onClick(View view) {
+        final String currUser = "TestUser"; // TODO - Make this the current user
         ViewGroup v = (ViewGroup) view.getParent();
         switch (view.getId()) {
             case R.id.exitFab:
                 closeFragment();
                 break;
             case R.id.rsvpButton:
-                addUserToGuestList();
+                Button b = (Button) view;
+                if(!b.getText().equals("Already RSVP'd! Decline?")) {
+                    addUserToGuestList(currUser, v);
+                    b.setText("Already RSVP'd! Decline?");
+                } else {
+                    removeUserFromGuestList(currUser, v);
+                    b.setText("RSVP");
+                }
         }
     }
 
@@ -129,8 +177,43 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         age.setText(ageStr);
         TextView openSpots = (TextView) v.findViewById(R.id.eventOpenSpots);
         String openSpotsStr = "Open Spots Remaining: " + Integer.toString(event.getCapacity() - event.getNumCurrentAttending());
-        age.setText(openSpotsStr);
+        openSpots.setText(openSpotsStr);
+        String time = "Time: " + event.getTime().toString();
+        TextView timeView = (TextView) v.findViewById(R.id.eventTime);
+        timeView.setText(time);
+    }
 
+    private void setText(final Button b, final String currUser, final Event event){
+        final String eventID = event.getKey();
+        b.setClickable(true);
+            mDatabase.child("attending").child(currUser).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    boolean alreadyIn = false;
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        String data = child.getValue().toString();
+                        if (data.equals(eventID)) {
+                            alreadyIn = true;
+                        }
+                        Log.d(TAG, child.getValue().toString());
+                    }
+                    if (alreadyIn) {
+                        b.setText("Already RSVP'd! Decline?");
+                    } else {
+                        if(event.getCapacity() - event.getNumCurrentAttending() > 0) {
+                            b.setText("RSVP");
+                        } else {
+                            b.setText("Event Full");
+                            b.setClickable(false);
+                        }
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                }
+            });
     }
 
     @Override
@@ -149,8 +232,11 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         String creator = this.getArguments().getString("creator");
         int num = this.getArguments().getInt("numAttending");
         String key = this.getArguments().getString("key");
+        int hour = this.getArguments().getInt("hour");
+        int minute = this.getArguments().getInt("minute");
 
-        event = new Event(title, location, capacity, date, description, cost, age, creator, num);
+        Time t = new Time(hour, minute);
+        event = new Event(title, location, capacity, date, description, cost, age, creator, num, t);
         event.setKey(key);
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
@@ -162,8 +248,11 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         FloatingActionButton exit = (FloatingActionButton) v.findViewById(R.id.exitFab);
         exit.setOnClickListener(this);
 
-        Button rsvp = (Button) v.findViewById(R.id.rsvpButton);
+        final Button rsvp = (Button) v.findViewById(R.id.rsvpButton);
         rsvp.setOnClickListener(this);
+
+        String currUser = "TestUser"; // TODO - Needs to be real logged in user
+        setText(rsvp, currUser, event);
 
         return v;
     }

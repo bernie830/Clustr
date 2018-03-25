@@ -1,6 +1,7 @@
 package com.nothing.hunnaz.clustr;
 
-import org.apache.commons.lang3.builder.*;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Created by hunterbernhardt on 2/9/18.
