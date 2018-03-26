@@ -84,7 +84,6 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         TextView openSpots = (TextView) v.findViewById(R.id.eventOpenSpots);
         String openSpotsStr = "Open Spots Remaining: " + Integer.toString(event.getCapacity() - event.getNumCurrentAttending());
         age.setText(openSpotsStr);
-
     }
 
     @Override

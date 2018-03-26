@@ -17,10 +17,14 @@ import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.widget.ListView;
+
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,6 +48,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private DrawerLayout mDrawerLayout;
 
+    private ListView mListView;
+
 
     private void switchIntent(Class name){
         Intent myIntent = new Intent(this.getContext(), name);
@@ -65,11 +71,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         ViewGroup v = (ViewGroup) view.getParent();
         switch (view.getId()) {
-            case R.id.testShow:
-                // TODO - This needs to be the event that was clicked
-                Event event = new Event("Fake Event","Here",1,"11/11/11","This is a cool event for being fake.",1,1,"Me", 12);
-                showItem(event);
-                break;
             case R.id.addEventButton:
                 switchIntent(AddEventActivity.class);
                 break;
@@ -88,47 +89,35 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             switchIntent(LoginActivity.class);
         }
         View v = inflater.inflate(R.layout.fragment_home, container, false);
-        int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
 
-        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
-            switchIntent(HomeActivity.class); // Change this to the landscape version
-        }
+        mDrawerLayout = v.findViewById(R.id.drawer_layout);
+        NavigationView navigationView = v.findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                        // set item as selected to persist highlight
+                        menuItem.setChecked(true);
+                        // close drawer when item is tapped
+                        mDrawerLayout.closeDrawers();
 
-        Button btnAdd = (Button) v.findViewById(R.id.testShow);
-        btnAdd.setOnClickListener(this);
-
-            mDrawerLayout = v.findViewById(R.id.drawer_layout);
-
-            NavigationView navigationView = v.findViewById(R.id.nav_view);
-            navigationView.setNavigationItemSelectedListener(
-                    new NavigationView.OnNavigationItemSelectedListener() {
-                        @Override
-                        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                            // set item as selected to persist highlight
-                            menuItem.setChecked(true);
-                            // close drawer when item is tapped
-                            mDrawerLayout.closeDrawers();
-
-                            // Add code here to update the UI based on the item selected
-                            // For example, swap UI fragments here
-                            switch(menuItem.getItemId()){
-                                case R.id.nav_account:
-                                    switchIntent(AccountActivity.class);
-                                    break;
-                                case R.id.nav_logout:
-                                    logoutUser();
-                                    break;
-                                case R.id.nav_exit:
-                                    getActivity().moveTaskToBack(true);
-                                    getActivity().finish();
-                                    break;
-                            }
-
-
-
-                            return true;
+                        // Add code here to update the UI based on the item selected
+                        // For example, swap UI fragments here
+                        switch(menuItem.getItemId()){
+                            case R.id.nav_account:
+                                switchIntent(AccountActivity.class);
+                                break;
+                            case R.id.nav_logout:
+                                logoutUser();
+                                break;
+                            case R.id.nav_exit:
+                                getActivity().moveTaskToBack(true);
+                                getActivity().finish();
+                                break;
                         }
+                        return true;
                     }
+                }
             );
 
         dbEvents = FirebaseDatabase.getInstance().getReference("events");
@@ -177,11 +166,34 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-//        dbEvents.push().setValue(new Event("Added from code", "your mom's house", 7, "022818", "fun time", 25, 18, "-A"));
-            FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.addEventButton);
-            fab.setOnClickListener(this);
+//      dbEvents.push().setValue(new Event("Added from code", "your mom's house", 7, "022818", "fun time", 25, 18, "-A"));
+        FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.addEventButton);
+        fab.setOnClickListener(this);
 
 
+        mListView = (ListView) v.findViewById(R.id.event_list_view);
+
+        // TODO - Get Events from Firebase
+        Event event1 = new Event("Pants Party","248 East Patterson Ave",20,"11/11/18","I think you mean party in your pants.",1,18,"Zane Clymer", 12);
+        Event event2 = new Event("Leif Erikson Day ","114 Scotland Ave",500,"10/09/18","Go Vikings!",0,21,"Tim Dunkin", 349);
+
+
+
+        final ArrayList<Event> listItems = new ArrayList<Event>();
+
+        listItems.add(event1);
+        listItems.add(event2);
+
+        EventAdapter adapter = new EventAdapter(this.getContext(), listItems);
+        mListView.setAdapter(adapter);
+
+        // Gives items onClickListeners
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                showItem(listItems.get(position));
+            }
+        });
 
         return v;
     }
