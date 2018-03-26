@@ -204,7 +204,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         double eventCost = event.getCost();
         String costNum;
         if(eventCost == 0){
-            costNum = "$FREE";
+            costNum = "FREE";
         }else{
             NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
             costNum = currencyFormatter.format(eventCost);
