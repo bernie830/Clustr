@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -24,9 +25,13 @@ import android.widget.AdapterView;
 
 import android.widget.ListView;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -34,8 +39,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -43,7 +50,7 @@ import java.util.ArrayList;
  *
  * Created by Zane Clymer on 2/28/2018.
  */
-public class HomeFragment extends Fragment implements View.OnClickListener {
+public class HomeFragment extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private FirebaseAuth mAuth;
     private Location CurrentLocation;
     private DrawerLayout mDrawerLayout;
@@ -78,6 +85,30 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         return (notOccurred && oldEnough && withinDist);
     }
 
+    private void filterMore(User user, final ArrayList<Event> items){
+        int i = 0;
+        Context con = this.getContext();
+        while(user != null && user.getBirthday() != null && i < items.size()){
+            Event e = items.get(i);
+            if(eventValid(e, user)){
+                i++;
+            } else {
+                items.remove(i);
+            }
+        }
+
+        EventAdapter adapter = new EventAdapter(con, items, CurrentLocation);
+        mListView.setAdapter(adapter);
+
+        // Gives items onClickListeners
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                showItem(items.get(position));
+            }
+        });
+    }
+
     private void filterEvents(final String id, final ArrayList<Event> items){
         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
         final Context con = this.getContext();
@@ -85,34 +116,23 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChildren()) { // TODO - Check here
-                    User retVal = dataSnapshot.child(id).getValue(User.class);
-
-                    int i = 0;
-                    while(retVal != null && retVal.getBirthday() != null && i < items.size()){
-                        Event e = items.get(i);
-                        if(eventValid(e, retVal)){
-                            i++;
-                        } else {
-                            items.remove(i);
-                        }
-                    }
-
-                    EventAdapter adapter = new EventAdapter(con, items, CurrentLocation);
-                    mListView.setAdapter(adapter);
-
-                    // Gives items onClickListeners
-                    mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            showItem(items.get(position));
-                        }
-                    });
+                    User user = dataSnapshot.child(id).getValue(User.class);
+                    getCurrentLocation(user, items);
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {}
         });
+    }
+
+    private synchronized void buildGoogleAPIClient(){
+        GoogleApiClient googleApiclient = new GoogleApiClient.Builder(getActivity())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        googleApiclient.connect();
     }
 
     @Override
@@ -127,39 +147,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         // List of events on the screen
         mListView = (ListView) v.findViewById(R.id.event_list_view);
 
-        final Context con = this.getContext();
-        // DB Instance
-        final ArrayList<Event> listItems = new ArrayList<Event>();
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("events");
-        mDatabase.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        //Get map of events in datasnapshot
-                        for(DataSnapshot child: dataSnapshot.getChildren()){
-                            listItems.add(child.getValue(Event.class));
-                        }
-                        filterEvents(currentFirebaseUser.getUid(), listItems);
-
-//                        collectEvents((Map<String,Object>) dataSnapshot.getValue());
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        //handle databaseError
-                        // TODO - Fill out
-                    }
-                });
-
+        buildGoogleAPIClient();
         // Location
-        mLocation = LocationServices.getFusedLocationProviderClient(getActivity());
-        CurrentLocation = new Location("");
-        CurrentLocation.setLongitude(-82.9988);
-        CurrentLocation.setLatitude(39.9612);
-        getCurrentLocation();
+//        CurrentLocation = new Location("");
+//        CurrentLocation.setLongitude(-82.9988);
+//        CurrentLocation.setLatitude(39.9612);
+        //getCurrentLocation();
 
         // User
-        if(mAuth.getCurrentUser() == null){
+        if (mAuth.getCurrentUser() == null) {
             switchIntent(LoginActivity.class);
         }
         currentFirebaseUser = mAuth.getCurrentUser();
@@ -183,7 +179,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
-                        switch(menuItem.getItemId()){
+                        switch (menuItem.getItemId()) {
                             case R.id.nav_account:
                                 switchIntent(AccountActivity.class);
                                 break;
@@ -206,7 +202,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         return v;
     }
 
-    private void getCurrentLocation() {
+    private void getCurrentLocation(final User user, final ArrayList<Event> list) {
         if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted
@@ -236,9 +232,20 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         if (location != null) {
                             CurrentLocation = location;
                             Log.d(TAG, "Current Location\n" + location.toString());
+                            filterMore(user, list);
                         }
                     }
-                });
+                }).addOnFailureListener(getActivity(), new OnFailureListener() {
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.d(TAG, "Failed Location Grab");
+                    }
+                }).addOnCompleteListener(getActivity(), new OnCompleteListener<Location>() {
+                @Override
+                public void onComplete(Task t) {
+                    Log.d(TAG, "Completed Location Grab");
+                }
+            });
         }
     }
 
@@ -253,7 +260,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                     // permission was granted, yay! Do the
                     // location-related task you need to do.
-                    getCurrentLocation();
+                    //getCurrentLocation();
 
                 } else {
 
@@ -296,5 +303,41 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private void logoutUser(){
         UserPrefs.logOutUser(super.getContext());
         switchIntent(WelcomeActivity.class);
+    }
+
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        final Context con = this.getContext();
+        // DB Instance
+        final ArrayList<Event> listItems = new ArrayList<Event>();
+        mLocation = LocationServices.getFusedLocationProviderClient(getActivity());
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("events");
+        mDatabase.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        //Get map of events in datasnapshot
+                        for(DataSnapshot child: dataSnapshot.getChildren()){
+                            listItems.add(child.getValue(Event.class));
+                        }
+                        filterEvents(currentFirebaseUser.getUid(), listItems);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //handle databaseError
+                        // TODO - Fill out
+                    }
+                });
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+    }
+
+    @Override
+    public void onConnectionFailed(final ConnectionResult connectionResult){
+
     }
 }
