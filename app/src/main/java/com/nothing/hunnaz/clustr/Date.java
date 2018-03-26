@@ -96,6 +96,11 @@ public class Date {
         return returnVal;
     }
 
+    public boolean notYetOccurred(Date day){
+        Date curr = getCurrentDate();
+        return dateBefore(curr);
+    }
+
     private Date getCurrentDate(){
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         java.util.Date date = new java.util.Date();

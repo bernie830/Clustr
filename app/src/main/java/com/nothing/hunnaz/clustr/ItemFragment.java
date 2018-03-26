@@ -1,7 +1,11 @@
 package com.nothing.hunnaz.clustr;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.ShapeDrawable;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -9,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -274,6 +279,21 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         currentFirebaseUser = mAuth.getCurrentUser();
+
+        ConstraintLayout layout = (ConstraintLayout) v.findViewById(R.id.linearLayout4); // id fetch from xml
+//        ShapeDrawable rectShapeDrawable = new ShapeDrawable(); // pre defined class
+//
+//// get paint
+//        Paint paint = rectShapeDrawable.getPaint();
+//
+//// set border color, stroke and stroke width
+//        paint.setColor(Color.BLACK);
+//        paint.setStyle(Paint.Style.STROKE);
+//        paint.setStrokeWidth(5); // you can change the value of 5
+//        layout.setBackgroundDrawable(rectShapeDrawable);
+
+        layout.setBackgroundColor(Color.GRAY);
+
 
         setUpInformation(v);
 

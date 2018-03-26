@@ -79,8 +79,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         //Get map of events in datasnapshot
                         for(DataSnapshot child: dataSnapshot.getChildren()){
-                            Event singleEvent = child.getValue(Event.class);
-                            listItems.add(singleEvent);
+                            listItems.add(child.getValue(Event.class));
                         }
 
 //                        collectEvents((Map<String,Object>) dataSnapshot.getValue());
@@ -148,6 +147,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         // List of events on the screen
         mListView = (ListView) v.findViewById(R.id.event_list_view);
 
+
+
         // TODO - Get Events from Firebase
 
 //        Time t = new Time(12,0);
@@ -155,7 +156,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 //        Event event2 = new Event("Leif Erikson Day ","114 Scotland Ave",500,"10/09/18","Go Vikings!",0,21,"Tim Dunkin", 347, t);
 
 //        listItems.add(event1);
-        EventAdapter adapter = new EventAdapter(this.getContext(), listItems);
+        EventAdapter adapter = new EventAdapter(this.getContext(), listItems, CurrentLocation);
         mListView.setAdapter(adapter);
 
         // Gives items onClickListeners
