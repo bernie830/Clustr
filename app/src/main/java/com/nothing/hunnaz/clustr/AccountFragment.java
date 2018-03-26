@@ -29,7 +29,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.backButton:
-                switchIntent(WelcomeActivity.class);
+                switchIntent(HomeActivity.class);
                 break;
             case R.id.changePasswordButton:
                 changePass();

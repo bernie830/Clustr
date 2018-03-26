@@ -135,6 +135,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.backButton:
+
                 break;
             case R.id.doneButton:
                 String nameStr = name.getText().toString();

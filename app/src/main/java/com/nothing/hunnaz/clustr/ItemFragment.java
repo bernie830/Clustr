@@ -158,7 +158,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    private void setUpInformation(View v){
+    private void setUpInformation(View v){ // TODO - Add All other info to screen
         TextView title = (TextView) v.findViewById(R.id.eventName);
         title.setText(event.getTitle());
         TextView desc = (TextView) v.findViewById(R.id.eventDescription);
