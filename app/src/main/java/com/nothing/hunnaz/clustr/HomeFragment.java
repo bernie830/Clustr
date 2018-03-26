@@ -147,6 +147,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         // List of events on the screen
         mListView = (ListView) v.findViewById(R.id.event_list_view);
 
+
+
         // TODO - Get Events from Firebase
 
 //        Time t = new Time(12,0);

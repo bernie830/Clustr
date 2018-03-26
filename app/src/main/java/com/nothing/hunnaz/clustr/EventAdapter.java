@@ -8,6 +8,15 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
@@ -24,6 +33,12 @@ public class EventAdapter extends BaseAdapter {
     private ArrayList<Event> mDataSource;
     private Location mLocation;
 
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentFirebaseUser;
+    private DatabaseReference mDatabase;
+    private User currUser;
+
+
 
     // Constructor
     public EventAdapter(Context context, ArrayList<Event> items, Location location) {
@@ -31,6 +46,61 @@ public class EventAdapter extends BaseAdapter {
         mDataSource = items;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mLocation = location;
+
+        mAuth = FirebaseAuth.getInstance();
+        currentFirebaseUser = mAuth.getCurrentUser();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        currUser = getUser(currentFirebaseUser.getUid());
+
+        filterEvents(mDataSource);
+    }
+
+    private User getUser(final String id){
+        final User retVal = new User();
+        mDatabase.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if(snapshot.getKey().equals(id)){
+                    retVal.copyFrom(snapshot.getValue(User.class));
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+            }
+        });
+        return retVal;
+    }
+
+    private float getLocation(Event e){
+        Location eventLoc = e.getLocation(this.mContext);
+        Location userLoc = null; //TODO-Nate - Get user location
+        float retVal = 100;
+        if(eventLoc == null || userLoc == null) {
+            retVal = eventLoc.distanceTo(userLoc);
+        }
+        return retVal;
+    }
+
+    private boolean eventValid(Event e, User user){
+        Date userBirthday = new Date(user.getBirthday());
+        int eventAgeCutoff = e.getAge();
+
+        float distance = getLocation(e);
+
+        return (e.notYetOccurred() && userBirthday.isOlderThan(eventAgeCutoff) && (distance <= 25));
+    }
+
+    private void filterEvents(ArrayList<Event> items){
+        int i = 0;
+        while(currUser != null && i < items.size()){
+            Event e = items.get(i);
+            if(eventValid(e, currUser)){
+                i++;
+            } else {
+                items.remove(i);
+            }
+        }
     }
 
     // Lets ListView know how many items to display.
@@ -75,21 +145,21 @@ public class EventAdapter extends BaseAdapter {
         // Fill Cost
         double eventCost = eventItem.getCost();
         String cost;
-        if (eventCost == 0) {
-            cost = "$FREE";
-        } else {
+        if(eventCost == 0){
+            cost = "FREE";
+        }else{
             NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
             cost = currencyFormatter.format(eventCost);
         }
         costTextView.setText(cost);
 
         // Fill Distance
-//        String distance = "1.24" + "mi";// TODO - Fix to be dynamic
+        DecimalFormat decimalFormat = new DecimalFormat("#.00");
         String distance = "N/A";
         if (mLocation != null) {
             float meters = mLocation.distanceTo(eventItem.getLocation(mContext));
             float miles = meters * (float) 0.000621371;
-            distance = Float.toString(miles) + "mi";
+            distance = decimalFormat.format(miles) + "mi";
         }
         distanceTextView.setText(distance);
 

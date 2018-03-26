@@ -152,6 +152,11 @@ public class Event {
         return loc;
     }
 
+    public boolean notYetOccurred(){
+        Date dateOfEvent = new Date(this.date);
+        return dateOfEvent.notYetOccurred(dateOfEvent);
+    }
+
     @Override
     public String toString() {
         return "Title: " + this.title +
