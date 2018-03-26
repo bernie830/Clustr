@@ -1,13 +1,22 @@
-package com.nothing.hunnaz.clustr.EventDB;
+package com.nothing.hunnaz.clustr;
 
-import org.apache.commons.lang3.builder.*;
+import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.List;
 
 /**
  * Created by hunterbernhardt on 2/9/18.
  */
 public class Event {
     private String title;
-    private String location;
+    private String address;
     private int capacity;
     private String date;
     private String description;
@@ -15,11 +24,13 @@ public class Event {
     private int age;
     private String creator;
     private int currAttending;
+    private String key;
+    private Time time;
     // TODO: implement pictureIDField and guestListField
 
-    public Event(String title, String location, int capacity, String date, String description, double cost, int age, String creatorID, int currAttendance) {
+    public Event(String title, String address, int capacity, String date, String description, double cost, int age, String creatorID, int currAttendance, Time t) {
         this.title = title;
-        this.location = location;
+        this.address = address;
         this.capacity = capacity;
         this.date = date;
         this.description = description;
@@ -27,6 +38,8 @@ public class Event {
         this.age = age;
         this.creator = creatorID;
         this.currAttending = currAttendance;
+        this.key = "";
+        this.time = t;
     }
     
     public Event() {}
@@ -40,12 +53,12 @@ public class Event {
         this.title = title;
     }
 
-    public String getLocation() {
-        return location;
+    public String getAddress() {
+        return address;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public int getCapacity() {
@@ -104,10 +117,45 @@ public class Event {
         this.currAttending = num;
     }
 
+    public String getKey() {
+        return this.key;
+    }
+
+    public void setKey(String k) {
+        this.key = k;
+    }
+
+    public Time getTime() {
+        return this.time;
+    }
+
+    public void setTime(Time k) {
+        this.time = k;
+    }
+
+    public Location getLocation(Context context) {
+        Location loc = new Location(LocationManager.GPS_PROVIDER);
+        Geocoder coder = new Geocoder(context);
+        List<Address> addresses;
+        try {
+            // May throw an IOException
+            addresses = coder.getFromLocationName(address, 5);
+            if (address != null) {
+                Address location = addresses.get(0);
+                loc.setLatitude(location.getLatitude());
+                loc.setLongitude(location.getLongitude());
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return loc;
+    }
+
     @Override
     public String toString() {
         return "Title: " + this.title +
-                "\nLocation: " + this.location +
+                "\nLocation: " + this.address +
                 "\nCapacity: " + this.capacity +
                 "\nDate: " + this.date +
                 "\nDescription: " + this.description +
@@ -128,7 +176,7 @@ public class Event {
 
         return new EqualsBuilder()
                 .append(title, event.title)
-                .append(location, event.location)
+                .append(address, event.address)
                 .append(capacity, event.capacity)
                 .append(date, event.date)
                 .append(description, event.description)
@@ -142,7 +190,7 @@ public class Event {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(title)
-                .append(location)
+                .append(address)
                 .append(capacity)
                 .append(date)
                 .append(description)

@@ -23,9 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.nothing.hunnaz.clustr.UserDB.User;
 
 
 /**
@@ -144,38 +142,25 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
             // Register the user with Firebase and add the account to the db
             newUser = new User(dob.toString(), email, username, "");
             createAccount(email, password);
-            if(currentFirebaseUser != null) {
-                // Sign in new user after creating account
-                signIn(email, password);
-                if(currentFirebaseUser != null) {
-                    newUser.setAccountID(currentFirebaseUser.getUid());
-                    // Add user to Firebase database
-                    addUserToDatabase(newUser);
-                } else {
-                    currentError = "ERROR: Could not sign in user.";
-                }
-            } else {
-                currentError = "ERROR: Could not create user.";
-            }
 
-            switchIntent(HomeActivity.class);
         }
         return currentError;
     }
 
-    private void createAccount(String email, String password) {
+    private void createAccount(final String email, final String password) {
         Log.d(TAG, "create account: " + email);
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithEmail: success");
+                    Log.d(TAG, "createAccount: success");
                     currentFirebaseUser = mAuth.getCurrentUser();
+                    signIn(email, password);
                 } else {
                     // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithEmail: failure", task.getException());
-                    Toast.makeText(getActivity(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "createAccount: failure", task.getException());
+                    Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     // TODO: Clear text views if auth fails?
                 }
             }
@@ -191,18 +176,23 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithEmail:success");
                     currentFirebaseUser = mAuth.getCurrentUser();
+                    newUser.setAccountID(currentFirebaseUser.getUid());
+                    addUserToDatabase();
                 } else {
                     // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithEmail:failure", task.getException());
-                    Toast.makeText(getActivity(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "signInWithEmail:failure", task.getException());
+                    Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
-    private void addUserToDatabase(User user) {
-        Log.d(TAG, "Signed in: " + user.getEmail());
-        mDatabase.child("users").child(user.getAccountID()).setValue(user);
+    private void addUserToDatabase() {
+        Log.d(TAG, "Add to databaase: " + newUser.getEmail());
+        mDatabase.child("users").child(newUser.getAccountID()).setValue(newUser);
+        // If the process reaches this point, account creation has been a success.
+        // Go to home activity.
+        switchIntent(HomeActivity.class);
     }
 
     private void switchIntent(Class name){
@@ -231,7 +221,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                     errorMessageText.setTextColor(Color.RED);
                 } else {
                     // Logs the user in automatically if no errors
-                    switchIntent(HomeActivity.class);
                 }
                 break;
         }

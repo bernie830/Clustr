@@ -12,8 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.nothing.hunnaz.clustr.UserDB.UserSingleton;
-
 /**
  *
  */
@@ -25,15 +23,16 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
     private TextView loginInfoMessage;
 
     private boolean confirmOldInformation(String username, String pass){
-        UserSingleton singleton = UserSingleton.get(this.getContext());
-        boolean validLogin = singleton.isValidLogin(username, pass);
-        return validLogin;
+//        UserSingleton singleton = UserSingleton.get(this.getContext());
+//        boolean validLogin = singleton.isValidLogin(username, pass);
+//        return validLogin;
+        return true;
     }
 
     // TODO - Does nothing right now
     private void saveNewPassword(String username, String newPass){
-        UserSingleton singleton = UserSingleton.get(this.getContext());
-        singleton.changePassword(username, newPass);
+//        UserSingleton singleton = UserSingleton.get(this.getContext());
+//        singleton.changePassword(username, newPass);
     }
 
     private void switchIntent(Class name){

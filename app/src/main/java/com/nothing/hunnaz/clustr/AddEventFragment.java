@@ -3,8 +3,9 @@ package com.nothing.hunnaz.clustr;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,16 +15,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.TimePicker;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.nothing.hunnaz.clustr.EventDB.Event;
 
 /**
  *
@@ -37,6 +34,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     EditText date;
     EditText capacity;
     EditText address;
+    TimePicker time;
     TextView information;
 
     private FirebaseAuth mAuth;
@@ -52,7 +50,9 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
     private void addEventToDatabase(Event event){
         Log.d(TAG, "create event: " + event.getTitle());
-        mDatabase.child("events").push().setValue(event);
+        String name = mDatabase.child("events").push().getKey();
+        event.setKey(name);
+        mDatabase.child("events").child(name).setValue(event);
     }
 
     private static String validateName(String name){
@@ -111,11 +111,16 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         return retVal;
     }
 
-    private static String validateAddress(String address){
+    private String validateAddress(String address){
         String retVal = "";
-        int len = address.length();
-        boolean b = (len == 0);
-        if(b) { retVal = "ERROR: An address must be entered for the event"; }
+        if (address.length() == 0) {
+            retVal = "ERROR: An address must be entered for the event";
+        }
+        Event tempEvent = new Event("", address, 0, "", "", 0, 0, "", 0, new Time());
+        Location loc = tempEvent.getLocation(getContext());
+        if(loc.getLatitude() == 0.0 && loc.getLongitude() == 0.0){
+            retVal = "The entered address was invalid. Must be a valid location.";
+        }
         return retVal;    }
 
     private static String validateUser(String user){
@@ -140,6 +145,16 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                 String capacityStr = capacity.getText().toString();
                 String addressStr = address.getText().toString();
                 String errorMessage = validateName(nameStr);
+                int hour = 0;
+                int minute = 0;
+                if (Build.VERSION.SDK_INT >= 23 ) {
+                    hour = time.getHour();
+                    minute = time.getMinute();
+                } else {
+                    hour = time.getCurrentHour();
+                    minute = time.getCurrentMinute();
+                }
+                Time t = new Time(hour, minute);
                 if(errorMessage.length() == 0){
                     errorMessage = validateAddress(addressStr);
                 }
@@ -171,7 +186,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                     double costDone = Double.parseDouble(costStr);
                     int ageDone = Integer.parseInt(ageStr);
                     String currentUser = currentFirebaseUser.getUid();
-                    Event newEvent = new Event(nameStr, addressStr, capacityDone, day.toString(), descriptionStr, costDone, ageDone, currentUser, 0);
+                    Event newEvent = new Event(nameStr, addressStr, capacityDone, day.toString(), descriptionStr, costDone, ageDone, currentUser, 0, t);
                     addEventToDatabase(newEvent);
                     switchIntent(HomeActivity.class);
                 } else {
@@ -196,6 +211,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         // Initialize auth and database
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        currentFirebaseUser = mAuth.getCurrentUser();
 
         Button btnAdd = (Button) v.findViewById(R.id.backButton);
         btnAdd.setOnClickListener(this);
@@ -212,6 +228,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         date = (EditText) v.findViewById(R.id.date);
         capacity = (EditText) v.findViewById(R.id.capacity);
         address = (EditText) v.findViewById(R.id.address);
+        time = (TimePicker) v.findViewById(R.id.timePicker);
 
         return v;
     }

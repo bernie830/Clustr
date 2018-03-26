@@ -7,8 +7,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.nothing.hunnaz.clustr.EventDB.Event;
-
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
