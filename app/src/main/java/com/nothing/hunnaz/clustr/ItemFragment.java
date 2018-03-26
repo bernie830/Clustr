@@ -24,7 +24,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 
 /**
@@ -177,33 +180,45 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    private void setUpInformation(View v){ // TODO - Add All other info to screen
+    private void setUpInformation(View v){
         TextView title = (TextView) v.findViewById(R.id.eventName);
         title.setText(event.getTitle());
+
         TextView desc = (TextView) v.findViewById(R.id.eventDescription);
         desc.setText(event.getDescription());
+
         TextView date = (TextView) v.findViewById(R.id.eventDate);
         Date day = new Date(event.getDate());
         String dateStr = "Date: " + day.toString();
         date.setText(dateStr);
-        TextView cost = (TextView) v.findViewById(R.id.eventCost);
-        DecimalFormat decimalFormat = new DecimalFormat("#.00");
-        String costStr = "FREE";
-        if(event.getCost() != 0){
-            costStr = decimalFormat.format(event.getCost());
-        }
-        costStr = decimalFormat.format(event.getCost());
-        costStr = "Cost: " + costStr;
-        cost.setText(costStr);
-        TextView age = (TextView) v.findViewById(R.id.eventAge);
-        String ageStr = "Age Required to Attend: " + Integer.toString(event.getAge());
-        age.setText(ageStr);
-        TextView openSpots = (TextView) v.findViewById(R.id.eventOpenSpots);
-        String openSpotsStr = "Open Spots Remaining: " + Integer.toString(event.getCapacity() - event.getNumCurrentAttending());
-        openSpots.setText(openSpotsStr);
+
         String time = "Time: " + event.getTime().toString();
         TextView timeView = (TextView) v.findViewById(R.id.eventTime);
         timeView.setText(time);
+
+        String address = "Address: " + event.getAddress();
+        TextView addressView = (TextView) v.findViewById(R.id.eventAddress);
+        addressView.setText(address);
+
+        TextView cost = (TextView) v.findViewById(R.id.eventCost);
+        double eventCost = event.getCost();
+        String costNum;
+        if(eventCost == 0){
+            costNum = "FREE";
+        }else{
+            NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
+            costNum = currencyFormatter.format(eventCost);
+        }
+        String costStr = "Cost: " + costNum;
+        cost.setText(costStr);
+
+        TextView age = (TextView) v.findViewById(R.id.eventAge);
+        String ageStr = "Age Required to Attend: " + Integer.toString(event.getAge());
+        age.setText(ageStr);
+
+        TextView openSpots = (TextView) v.findViewById(R.id.eventOpenSpots);
+        String openSpotsStr = "Open Spots Remaining: " + Integer.toString(event.getCapacity() - event.getNumCurrentAttending());
+        openSpots.setText(openSpotsStr);
     }
 
     private void setText(final Button b, final String currUser, final Event event){

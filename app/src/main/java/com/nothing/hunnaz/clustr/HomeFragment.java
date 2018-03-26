@@ -131,7 +131,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         for(DataSnapshot child: dataSnapshot.getChildren()){
                             listItems.add(child.getValue(Event.class));
                         }
-
                         filterEvents(listItems);
 
 //                        collectEvents((Map<String,Object>) dataSnapshot.getValue());
@@ -200,15 +199,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         // List of events on the screen
         mListView = (ListView) v.findViewById(R.id.event_list_view);
 
-
-
-        // TODO - Get Events from Firebase
-
-//        Time t = new Time(12,0);
-//        Event event1 = new Event("Pants Party","248 East Patterson Ave",20,"11/11/18","I think you mean party in your pants.",1,18,"Zane Clymer", 18, t);
-//        Event event2 = new Event("Leif Erikson Day ","114 Scotland Ave",500,"10/09/18","Go Vikings!",0,21,"Tim Dunkin", 347, t);
-
-//        listItems.add(event1);
         EventAdapter adapter = new EventAdapter(this.getContext(), listItems, CurrentLocation);
         mListView.setAdapter(adapter);
 
@@ -222,43 +212,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         return v;
     }
-
-//    private void collectEvents(DataSnapshot childSnapshot) {
-//
-//
-//
-//        ArrayList<Event> listOfEvents = new ArrayList<Event>();
-//
-//        //iterate through each user, ignoring their UID
-//        for (Map.Entry<String, Object> entry : events.entrySet()){
-//
-//            //Get user map
-//            Map singleEvent = (Map) entry.getValue();
-//            String title = (String) singleEvent.get("title");
-//            String location = (String) singleEvent.get("location");
-//            int capacity = (int) singleEvent.get("capacity");
-//            String date = (String) singleEvent.get("date");
-//            String description = (String) singleEvent.get("description");
-//            double cost = (double) singleEvent.get("cost");
-//            int age = (int) singleEvent.get("age");
-//            String creatorId = (String) singleEvent.get("creatorId");
-//            int numCurrentAttending = (int) singleEvent.get("numCurrentAttending");
-//            Time time = (Time) singleEvent.get("time");
-//
-//            Event newEvent = new Event((String) singleEvent.get("title"),
-//                    (String) singleEvent.get("location"),
-//                    (int) singleEvent.get("capacity"),
-//                    (String) singleEvent.get("date"),
-//                    (String) singleEvent.get("description"),
-//                    (double) singleEvent.get("cost"),
-//                    (int) singleEvent.get("age"),
-//                    (String) singleEvent.get("creatorId"),
-//                    (int) singleEvent.get("numCurrentAttending"),
-//                    (Time) singleEvent.get("time"));
-//            // Get phone field and append to list
-//            listOfEvents.add(newEvent);
-//        }
-//    }
 
     private void getLocation() {
         if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)

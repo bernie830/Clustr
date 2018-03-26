@@ -13,13 +13,13 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="65dp"
-        android:layout_marginStart="65dp"
-        android:layout_marginTop="16dp"
-        android:textStyle="bold"
+        android:layout_marginLeft="25dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="14dp"
+        android:text="Title"
         android:textColor="#000"
         android:textSize="20dp"
-        android:text="Title" />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/event_item_date"
@@ -48,13 +48,14 @@
         android:id="@+id/event_item_distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/event_item_cost"
-        android:layout_marginLeft="54dp"
-        android:layout_marginStart="54dp"
-        android:layout_toEndOf="@+id/event_item_cost"
-        android:layout_toRightOf="@+id/event_item_cost"
+        android:layout_alignBaseline="@+id/event_item_cost"
+        android:layout_alignBottom="@+id/event_item_cost"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="44dp"
+        android:layout_marginRight="44dp"
+        android:text="Distance"
         android:textColor="#000"
-        android:textSize="15dp"
-        android:text="Distance" />
+        android:textSize="15dp" />
 </RelativeLayout>
 
