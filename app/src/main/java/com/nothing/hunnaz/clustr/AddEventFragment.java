@@ -93,7 +93,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     private static String validateDate(String date){
         String retVal = "";
         Date day = new Date(date);
-        if(!day.confirmDate()){
+        if(!day.confirmDate(true)){
             retVal = "ERROR: The entered date is not valid";
         }
         return retVal;    }

@@ -134,13 +134,14 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
             currentError = passwordError;
         }else if(!confirmPasswordEquality(password, passwordConfirm)) {
             currentError = "ERROR: The entered password does not match the confirmation password.";
-        } else if (!dob.confirmDate()) {
+        } else if (!dob.confirmDate(false)) {
             currentError = "ERROR: The date of birth entered is not valid.";
         } else {
             //NO errors occurred
 
             // Register the user with Firebase and add the account to the db
-            newUser = new User(dob.toString(), email, username, "");
+            String dateOfBirth = dob.toString();
+            newUser = new User(dateOfBirth, email, username, "");
             createAccount(email, password);
 
         }

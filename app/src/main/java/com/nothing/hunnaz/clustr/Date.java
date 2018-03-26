@@ -1,5 +1,10 @@
 package com.nothing.hunnaz.clustr;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.text.DateFormat;
+import java.util.Calendar;
+
 /**
  * Created by hunterbernhardt on 2/21/18.
  */
@@ -47,30 +52,90 @@ public class Date {
                 yearVal = -1;
             }
         }
-        if(yearVal < 100){
+        if(yearVal < 25){ // TODO - Arbitrary date
+            yearVal += 2000;
+        } else if(yearVal < 100){
             yearVal += 1900;
         }
         return yearVal;
     }
 
-    private boolean validateDate(){
-        boolean monthValid = (this.month > 0 && this.month < 13);
-        boolean dayValid = (this.day > 0 && this.day < 32);
-        boolean yearValid = (this.year > 1900 && this.year < 2018);
-
-        return monthValid && dayValid && yearValid;
+    public int getYear(){
+        return this.year;
     }
 
-    public String toString(){
-        String returnVal = "";
-        if(this.validDate){
-            returnVal = this.month + "/" + this.day + "/" + this.year;
+    public int getMonth(){
+        return this.month;
+    }
+
+    public int getDay(){
+        return this.day;
+    }
+
+    private boolean dateAfter(Date day){
+        boolean returnVal = false;
+        if(day.getYear() < this.year){
+            returnVal = true;
+        } else if(day.getYear() == this.year && day.getMonth() < this.month){
+            returnVal = true;
+        } else if(day.getYear() == this.year && day.getMonth() == this.month && day.getDay() < this.day){
+            returnVal = true;
         }
         return returnVal;
     }
 
-    public boolean confirmDate() {
-        return this.validDate;
+    private boolean dateBefore(Date day){
+        boolean returnVal = false;
+        if(day.getYear() >= this.year){
+            returnVal = true;
+        } else if(day.getYear() == this.year && day.getMonth() >= this.month){
+            returnVal = true;
+        } else if(day.getYear() == this.year && day.getMonth() == this.month && day.getDay() >= this.day){
+            returnVal = true;
+        }
+        return returnVal;
+    }
+
+    private Date getCurrentDate(){
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        java.util.Date date = new java.util.Date();
+        Date today = new Date(dateFormat.format(date));
+        return today;
+    }
+
+    private boolean validateDate(boolean forEvent){
+        boolean monthValid = (this.month > 0 && this.month < 13);
+        boolean dayValid = (this.day > 0 && this.day < 32);
+        boolean value = monthValid && dayValid;
+        Date today = getCurrentDate();
+
+        if(forEvent) {
+            if (!dateAfter(today)) {
+                value = false;
+            }
+        } else {
+            if (!dateBefore(today)) {
+                value = false;
+            }
+        }
+
+        return value;
+    }
+
+    public boolean isOlderThan(int age){
+        Date day = getCurrentDate();
+        int newYear = day.getYear() - age;// TODO - kernel purity??
+        Date dayToCompare = new Date(Integer.toString(day.getMonth()), Integer.toString(day.getYear()), Integer.toString(newYear));
+        return dateBefore(dayToCompare);
+    }
+
+    public String toString(){
+        String returnVal = this.month + "/" + this.day + "/" + this.year;
+        return returnVal;
+    }
+
+    public boolean confirmDate(boolean forEvent) {
+        return validateDate(forEvent);
     }
 
     public Date (String monthStr, String dayStr, String yearStr){
@@ -106,6 +171,5 @@ public class Date {
         this.day = getDayNum(dayStr);
         this.year = getYearNum(yearStr);
 
-        this.validDate = validateDate();
     }
 }
