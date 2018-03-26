@@ -1,9 +1,7 @@
 package com.nothing.hunnaz.clustr;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.text.DateFormat;
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by hunterbernhardt on 2/21/18.

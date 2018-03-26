@@ -1,7 +1,6 @@
 package com.nothing.hunnaz.clustr;
 
 import android.support.v4.app.Fragment;
-import android.view.Surface;
 
 public class AddEventActivity extends SingleFragmentActivity{
 
