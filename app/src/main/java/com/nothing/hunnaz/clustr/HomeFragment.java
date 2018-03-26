@@ -1,6 +1,7 @@
 package com.nothing.hunnaz.clustr;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -89,6 +90,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private void filterEvents(final String id, final ArrayList<Event> items){
         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+        final Context con = this.getContext();
         db.child("users").orderByKey().equalTo(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -104,6 +106,17 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                             items.remove(i);
                         }
                     }
+
+                    EventAdapter adapter = new EventAdapter(con, items, CurrentLocation);
+                    mListView.setAdapter(adapter);
+
+                    // Gives items onClickListeners
+                    mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            showItem(items.get(position));
+                        }
+                    });
                 }
             }
 
@@ -115,9 +128,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // View and rotation
+        View v = inflater.inflate(R.layout.fragment_home, container, false);
+
         // Firebase
         mAuth = FirebaseAuth.getInstance();
 
+        // List of events on the screen
+        mListView = (ListView) v.findViewById(R.id.event_list_view);
+
+        final Context con = this.getContext();
         // DB Instance
         final ArrayList<Event> listItems = new ArrayList<Event>();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("events");
@@ -150,9 +170,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             switchIntent(LoginActivity.class);
         }
         currentFirebaseUser = mAuth.getCurrentUser();
-
-        // View and rotation
-        View v = inflater.inflate(R.layout.fragment_home, container, false);
 
 //        int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
 //        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
@@ -193,19 +210,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         // Add Event button
         FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.addEventButton);
         fab.setOnClickListener(this);
-        // List of events on the screen
-        mListView = (ListView) v.findViewById(R.id.event_list_view);
-
-        EventAdapter adapter = new EventAdapter(this.getContext(), listItems, CurrentLocation);
-        mListView.setAdapter(adapter);
-
-        // Gives items onClickListeners
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showItem(listItems.get(position));
-            }
-        });
         return v;
     }
 
