@@ -74,10 +74,10 @@ public class EventAdapter extends BaseAdapter {
 
     private float getLocation(Event e){
         Location eventLoc = e.getLocation(this.mContext);
-        Location userLoc = null; //TODO-Nate - Get user location
         float retVal = 100;
-        if(eventLoc == null || userLoc == null) {
-            retVal = eventLoc.distanceTo(userLoc);
+        if (mLocation != null && eventLoc != null) {
+            float meters = mLocation.distanceTo(e.getLocation(mContext));
+            retVal = meters * (float) 0.000621371;
         }
         return retVal;
     }
