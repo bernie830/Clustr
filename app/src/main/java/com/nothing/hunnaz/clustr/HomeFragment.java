@@ -56,6 +56,28 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private final String TAG = "HomeFragment";
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
+
+    private float getLocation(Event e){
+        Location eventLoc = e.getLocation(this.getContext());
+        float retVal = 100;
+        if (CurrentLocation != null && eventLoc != null) {
+            float meters = CurrentLocation.distanceTo(e.getLocation(this.getContext()));
+            retVal = meters * (float) 0.000621371;
+        }
+        return retVal;
+    }
+
+    private boolean eventValid(Event e, User user) {
+        Date userBirthday = new Date(user.getBirthday());
+        int eventAgeCutoff = e.getAge();
+
+        float distance = getLocation(e);
+        boolean notOccurred = e.notYetOccurred();
+        boolean oldEnough = userBirthday.isOlderThan(eventAgeCutoff);
+        boolean withinDist = true; //(distance <= 25);// TODO! - Need real distance
+        return (notOccurred && oldEnough && withinDist);
+    }
+
     private void filterEvents(final String id, final ArrayList<Event> items){
         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
         final Context con = this.getContext();
@@ -182,54 +204,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.addEventButton);
         fab.setOnClickListener(this);
         return v;
-    }
-
-    private float getLocation(Event e){
-        Location eventLoc = e.getLocation(this.getContext());
-        float retVal = 100;
-        if (CurrentLocation != null && eventLoc != null) {
-            float meters = CurrentLocation.distanceTo(e.getLocation(this.getContext()));
-            retVal = meters * (float) 0.000621371;
-        }
-        return retVal;
-    }
-
-    private boolean eventValid(Event e, User user){
-        Date userBirthday = new Date(user.getBirthday());
-        int eventAgeCutoff = e.getAge();
-
-        float distance = getLocation(e);
-
-        return (e.notYetOccurred() && userBirthday.isOlderThan(eventAgeCutoff) && (distance <= 25));
-    }
-
-    private void getUser(final String id, final ArrayList<Event> items){
-
-        mDatabase.child("users").orderByKey().equalTo(id).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChildren()) { // TODO - Check here
-                    User retVal = dataSnapshot.getValue(User.class);
-
-                    int i = 0;
-                    while(retVal != null && retVal.getBirthday() != null && i < items.size()){
-                        Event e = items.get(i);
-                        if(eventValid(e, retVal)){
-                            i++;
-                        } else {
-                            items.remove(i);
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
-    }
-
-    private void filterEvents(ArrayList<Event> items){
-        getUser(currentFirebaseUser.getUid(), items);
     }
 
     private void getCurrentLocation() {
