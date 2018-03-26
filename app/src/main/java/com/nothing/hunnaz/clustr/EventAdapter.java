@@ -52,7 +52,6 @@ public class EventAdapter extends BaseAdapter {
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         currUser = getUser(currentFirebaseUser.getUid());
-
     }
 
     private User getUser(final String id){
@@ -158,7 +157,7 @@ public class EventAdapter extends BaseAdapter {
         if (mLocation != null) {
             float meters = mLocation.distanceTo(eventItem.getLocation(mContext));
             float miles = meters * (float) 0.000621371;
-            distance = decimalFormat.format(miles) + "mi";
+            distance = decimalFormat.format(miles) + " mi";
         }
         distanceTextView.setText(distance);
 

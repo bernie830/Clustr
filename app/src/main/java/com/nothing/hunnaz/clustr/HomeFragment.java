@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -18,15 +17,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.widget.ListView;
 
 
@@ -35,17 +29,13 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 
 
 /**
@@ -65,54 +55,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private final String TAG = "HomeFragment";
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-
-    private float getLocation(Event e){
-        Location eventLoc = e.getLocation(this.getContext());
-        float retVal = 100;
-        if (CurrentLocation != null && eventLoc != null) {
-            float meters = CurrentLocation.distanceTo(e.getLocation(this.getContext()));
-            retVal = meters * (float) 0.000621371;
-        }
-        return retVal;
-    }
-
-    private boolean eventValid(Event e, User user){
-        Date userBirthday = new Date(user.getBirthday());
-        int eventAgeCutoff = e.getAge();
-
-        float distance = getLocation(e);
-
-        return (e.notYetOccurred() && userBirthday.isOlderThan(eventAgeCutoff) && (distance <= 25));
-    }
-
-    private void getUser(final String id, final ArrayList<Event> items){
-
-        mDatabase.child("users").orderByKey().equalTo(id).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChildren()) { // TODO - Check here
-                    User retVal = dataSnapshot.getValue(User.class);
-
-                    int i = 0;
-                    while(retVal != null && retVal.getBirthday() != null && i < items.size()){
-                        Event e = items.get(i);
-                        if(eventValid(e, retVal)){
-                            i++;
-                        } else {
-                            items.remove(i);
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
-    }
-
-    private void filterEvents(ArrayList<Event> items){
-        getUser(currentFirebaseUser.getUid(), items);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -145,7 +87,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         // Location
         mLocation = LocationServices.getFusedLocationProviderClient(getActivity());
-        getLocation();
+        CurrentLocation = new Location("");
+        CurrentLocation.setLongitude(-82.9988);
+        CurrentLocation.setLatitude(39.9612);
+        getCurrentLocation();
 
         // User
         if(mAuth.getCurrentUser() == null){
@@ -213,7 +158,55 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         return v;
     }
 
-    private void getLocation() {
+    private float getLocation(Event e){
+        Location eventLoc = e.getLocation(this.getContext());
+        float retVal = 100;
+        if (CurrentLocation != null && eventLoc != null) {
+            float meters = CurrentLocation.distanceTo(e.getLocation(this.getContext()));
+            retVal = meters * (float) 0.000621371;
+        }
+        return retVal;
+    }
+
+    private boolean eventValid(Event e, User user){
+        Date userBirthday = new Date(user.getBirthday());
+        int eventAgeCutoff = e.getAge();
+
+        float distance = getLocation(e);
+
+        return (e.notYetOccurred() && userBirthday.isOlderThan(eventAgeCutoff) && (distance <= 25));
+    }
+
+    private void getUser(final String id, final ArrayList<Event> items){
+
+        mDatabase.child("users").orderByKey().equalTo(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChildren()) { // TODO - Check here
+                    User retVal = dataSnapshot.getValue(User.class);
+
+                    int i = 0;
+                    while(retVal != null && retVal.getBirthday() != null && i < items.size()){
+                        Event e = items.get(i);
+                        if(eventValid(e, retVal)){
+                            i++;
+                        } else {
+                            items.remove(i);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
+    }
+
+    private void filterEvents(ArrayList<Event> items){
+        getUser(currentFirebaseUser.getUid(), items);
+    }
+
+    private void getCurrentLocation() {
         if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted
@@ -259,7 +252,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
+                    // location-related task you need to do.
+                    getCurrentLocation();
 
                 } else {
 

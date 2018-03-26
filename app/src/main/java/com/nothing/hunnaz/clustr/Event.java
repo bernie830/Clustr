@@ -5,6 +5,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.util.Log;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -139,11 +140,11 @@ public class Event {
         List<Address> addresses;
         try {
             // May throw an IOException
-            addresses = coder.getFromLocationName(address, 5);
-            if (address != null) {
-                Address location = addresses.get(0);
-                loc.setLatitude(location.getLatitude());
-                loc.setLongitude(location.getLongitude());
+            addresses = coder.getFromLocationName(address, 1);
+            if (address != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                loc.setLatitude(address.getLatitude());
+                loc.setLongitude(address.getLongitude());
             }
 
         } catch (Exception ex) {
