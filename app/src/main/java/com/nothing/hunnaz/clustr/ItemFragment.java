@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +31,8 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
     private Event event;
     private DatabaseReference mDatabase;
     private static final String TAG = "ItemFragment";
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentFirebaseUser;
 
     private void closeFragment(){
         getFragmentManager().popBackStackImmediate();
@@ -91,6 +95,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         addItemToDB(eventID, attendingTable, currUser);
         addItemToDB(currUser, guestTable, eventID);
         event.setNumCurrentAttending(event.getNumCurrentAttending() + 1);
+        updateEventInDB();
         String str =  "Open Spots Remaining: " + Integer.toString(event.getCapacity() - event.getNumCurrentAttending());
         TextView text = (TextView) v.findViewById(R.id.eventOpenSpots);
         if(text != null){
@@ -122,6 +127,13 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         });
     }
 
+    private void updateEventInDB(){
+        String key = event.getKey();
+
+        Log.d(TAG, "update event: " + event.getTitle());
+        mDatabase.child("events").child(key).setValue(event);
+    }
+
     private void removeUserFromGuestList(final String currUser, View v) {
         String eventID = event.getKey();
         String attendingTable = "attending";
@@ -130,6 +142,8 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         removeItemFromDB(eventID, attendingTable, currUser);
         removeItemFromDB(currUser, guestTable, eventID);
         event.setNumCurrentAttending(event.getNumCurrentAttending() - 1);
+        updateEventInDB();
+
         String str =  "Open Spots Remaining: " + Integer.toString(event.getCapacity() - event.getNumCurrentAttending());
         TextView text = (TextView) v.findViewById(R.id.eventOpenSpots);
         if(text != null){
@@ -140,7 +154,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View view) {
-        final String currUser = "TestUser"; // TODO - Make this the current user
+        final String currUser = currentFirebaseUser.getUid(); // TODO - Make this the current user
         ViewGroup v = (ViewGroup) view.getParent();
         switch (view.getId()) {
             case R.id.exitFab:
@@ -239,10 +253,9 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         Time t = new Time(hour, minute);
         event = new Event(title, location, capacity, date, description, cost, age, creator, num, t);
         event.setKey(key);
+        mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-
-        //ImageView image = (ImageView) v.findViewById(R.id.eventImage);
-        //image.setImageResource(R.mipmap.missing_img_round);
+        currentFirebaseUser = mAuth.getCurrentUser();
 
         setUpInformation(v);
 
@@ -252,7 +265,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         final Button rsvp = (Button) v.findViewById(R.id.rsvpButton);
         rsvp.setOnClickListener(this);
 
-        String currUser = "TestUser"; // TODO - Needs to be real logged in user
+        String currUser = currentFirebaseUser.getUid(); // TODO - Needs to be real logged in user
         setText(rsvp, currUser, event);
 
         return v;
