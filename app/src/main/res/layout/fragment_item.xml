@@ -6,7 +6,7 @@
     android:paddingLeft="8dp"
     android:paddingRight="8dp"
     android:clickable="true"
-    android:alpha="0.975">
+    android:alpha="1.0">
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/exitFab"
