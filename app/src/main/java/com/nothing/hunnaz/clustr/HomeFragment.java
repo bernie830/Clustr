@@ -56,27 +56,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private final String TAG = "HomeFragment";
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
-    private float getLocation(Event e){
-        Location eventLoc = e.getLocation(this.getContext());
-        float retVal = 100;
-        if (CurrentLocation != null && eventLoc != null) {
-            float meters = CurrentLocation.distanceTo(e.getLocation(this.getContext()));
-            retVal = meters * (float) 0.000621371;
-        }
-        return retVal;
-    }
-
-    private boolean eventValid(Event e, User user){
-        Date userBirthday = new Date(user.getBirthday());
-        int eventAgeCutoff = e.getAge();
-
-        float distance = getLocation(e);
-        boolean notOccurred = e.notYetOccurred();
-        boolean oldEnough = userBirthday.isOlderThan(eventAgeCutoff);
-        boolean withinDist = true; //(distance <= 25);// TODO! - Need real distance
-        return (notOccurred && oldEnough && withinDist);
-    }
-
     private void filterEvents(final String id, final ArrayList<Event> items){
         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
         final Context con = this.getContext();
