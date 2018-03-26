@@ -87,8 +87,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         return (notOccurred && oldEnough && withinDist);
     }
 
-    private void getUser(final String id, final ArrayList<Event> items){
-
+    private void filterEvents(final String id, final ArrayList<Event> items){
         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
         db.child("users").orderByKey().equalTo(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -113,10 +112,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         });
     }
 
-    private void filterEvents(ArrayList<Event> items){
-        getUser(currentFirebaseUser.getUid(), items);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -134,7 +129,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         for(DataSnapshot child: dataSnapshot.getChildren()){
                             listItems.add(child.getValue(Event.class));
                         }
-                        filterEvents(listItems);
+                        filterEvents(currentFirebaseUser.getUid(), listItems);
 
 //                        collectEvents((Map<String,Object>) dataSnapshot.getValue());
                     }
@@ -198,7 +193,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         // Add Event button
         FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.addEventButton);
         fab.setOnClickListener(this);
-
         // List of events on the screen
         mListView = (ListView) v.findViewById(R.id.event_list_view);
 
@@ -212,7 +206,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 showItem(listItems.get(position));
             }
         });
-
         return v;
     }
 
