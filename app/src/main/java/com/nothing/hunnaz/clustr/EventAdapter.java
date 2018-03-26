@@ -53,7 +53,6 @@ public class EventAdapter extends BaseAdapter {
 
         currUser = getUser(currentFirebaseUser.getUid());
 
-        filterEvents(mDataSource);
     }
 
     private User getUser(final String id){

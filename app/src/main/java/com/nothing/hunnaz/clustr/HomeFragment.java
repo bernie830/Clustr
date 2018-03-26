@@ -34,6 +34,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -58,11 +59,60 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private DrawerLayout mDrawerLayout;
     private FusedLocationProviderClient mLocation;
     private DatabaseReference mDatabase;
+    private FirebaseUser currentFirebaseUser;
 
     private ListView mListView;
 
     private final String TAG = "HomeFragment";
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+
+    private float getLocation(Event e){
+        Location eventLoc = e.getLocation(this.getContext());
+        float retVal = 100;
+        if (CurrentLocation != null && eventLoc != null) {
+            float meters = CurrentLocation.distanceTo(e.getLocation(this.getContext()));
+            retVal = meters * (float) 0.000621371;
+        }
+        return retVal;
+    }
+
+    private boolean eventValid(Event e, User user){
+        Date userBirthday = new Date(user.getBirthday());
+        int eventAgeCutoff = e.getAge();
+
+        float distance = getLocation(e);
+
+        return (e.notYetOccurred() && userBirthday.isOlderThan(eventAgeCutoff) && (distance <= 25));
+    }
+
+    private void getUser(final String id, final ArrayList<Event> items){
+
+        mDatabase.child("users").orderByKey().equalTo(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChildren()) { // TODO - Check here
+                    User retVal = dataSnapshot.getValue(User.class);
+
+                    int i = 0;
+                    while(retVal != null retVal.getBirthday() != null && i < items.size()){
+                        Event e = items.get(i);
+                        if(eventValid(e, retVal)){
+                            i++;
+                        } else {
+                            items.remove(i);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
+    }
+
+    private void filterEvents(ArrayList<Event> items){
+        getUser(currentFirebaseUser.getUid(), items);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,6 +132,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                             listItems.add(child.getValue(Event.class));
                         }
 
+                        filterEvents(listItems);
+
 //                        collectEvents((Map<String,Object>) dataSnapshot.getValue());
                     }
 
@@ -100,6 +152,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         if(mAuth.getCurrentUser() == null){
             switchIntent(LoginActivity.class);
         }
+        currentFirebaseUser = mAuth.getCurrentUser();
 
         // View and rotation
         View v = inflater.inflate(R.layout.fragment_home, container, false);
