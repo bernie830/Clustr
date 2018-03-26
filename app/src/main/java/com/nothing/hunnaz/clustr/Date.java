@@ -1,9 +1,7 @@
 package com.nothing.hunnaz.clustr;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.text.DateFormat;
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by hunterbernhardt on 2/21/18.
@@ -98,7 +96,7 @@ public class Date {
 
     public boolean notYetOccurred(Date day){
         Date curr = getCurrentDate();
-        return dateBefore(curr);
+        return dateAfter(curr);
     }
 
     private Date getCurrentDate(){
@@ -130,7 +128,7 @@ public class Date {
     public boolean isOlderThan(int age){
         Date day = getCurrentDate();
         int newYear = day.getYear() - age;// TODO - kernel purity??
-        Date dayToCompare = new Date(Integer.toString(day.getMonth()), Integer.toString(day.getYear()), Integer.toString(newYear));
+        Date dayToCompare = new Date(Integer.toString(day.getMonth()), Integer.toString(day.getDay()), Integer.toString(newYear));
         return dateBefore(dayToCompare);
     }
 

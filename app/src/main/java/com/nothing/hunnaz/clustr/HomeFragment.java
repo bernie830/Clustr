@@ -1,6 +1,7 @@
 package com.nothing.hunnaz.clustr;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -22,7 +23,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import android.widget.ListView;
-
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -56,12 +56,77 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private final String TAG = "HomeFragment";
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
+    private float getLocation(Event e){
+        Location eventLoc = e.getLocation(this.getContext());
+        float retVal = 100;
+        if (CurrentLocation != null && eventLoc != null) {
+            float meters = CurrentLocation.distanceTo(e.getLocation(this.getContext()));
+            retVal = meters * (float) 0.000621371;
+        }
+        return retVal;
+    }
+
+    private boolean eventValid(Event e, User user){
+        Date userBirthday = new Date(user.getBirthday());
+        int eventAgeCutoff = e.getAge();
+
+        float distance = getLocation(e);
+        boolean notOccurred = e.notYetOccurred();
+        boolean oldEnough = userBirthday.isOlderThan(eventAgeCutoff);
+        boolean withinDist = true; //(distance <= 25);// TODO! - Need real distance
+        return (notOccurred && oldEnough && withinDist);
+    }
+
+    private void filterEvents(final String id, final ArrayList<Event> items){
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+        final Context con = this.getContext();
+        db.child("users").orderByKey().equalTo(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChildren()) { // TODO - Check here
+                    User retVal = dataSnapshot.child(id).getValue(User.class);
+
+                    int i = 0;
+                    while(retVal != null && retVal.getBirthday() != null && i < items.size()){
+                        Event e = items.get(i);
+                        if(eventValid(e, retVal)){
+                            i++;
+                        } else {
+                            items.remove(i);
+                        }
+                    }
+
+                    EventAdapter adapter = new EventAdapter(con, items, CurrentLocation);
+                    mListView.setAdapter(adapter);
+
+                    // Gives items onClickListeners
+                    mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            showItem(items.get(position));
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // View and rotation
+        View v = inflater.inflate(R.layout.fragment_home, container, false);
+
         // Firebase
         mAuth = FirebaseAuth.getInstance();
 
+        // List of events on the screen
+        mListView = (ListView) v.findViewById(R.id.event_list_view);
+
+        final Context con = this.getContext();
         // DB Instance
         final ArrayList<Event> listItems = new ArrayList<Event>();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("events");
@@ -73,7 +138,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         for(DataSnapshot child: dataSnapshot.getChildren()){
                             listItems.add(child.getValue(Event.class));
                         }
-                        filterEvents(listItems);
+                        filterEvents(currentFirebaseUser.getUid(), listItems);
 
 //                        collectEvents((Map<String,Object>) dataSnapshot.getValue());
                     }
@@ -97,9 +162,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             switchIntent(LoginActivity.class);
         }
         currentFirebaseUser = mAuth.getCurrentUser();
-
-        // View and rotation
-        View v = inflater.inflate(R.layout.fragment_home, container, false);
 
 //        int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
 //        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
@@ -140,21 +202,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         // Add Event button
         FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.addEventButton);
         fab.setOnClickListener(this);
-
-        // List of events on the screen
-        mListView = (ListView) v.findViewById(R.id.event_list_view);
-
-        EventAdapter adapter = new EventAdapter(this.getContext(), listItems, CurrentLocation);
-        mListView.setAdapter(adapter);
-
-        // Gives items onClickListeners
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showItem(listItems.get(position));
-            }
-        });
-
         return v;
     }
 
