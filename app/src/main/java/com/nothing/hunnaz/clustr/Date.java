@@ -98,7 +98,7 @@ public class Date {
 
     public boolean notYetOccurred(Date day){
         Date curr = getCurrentDate();
-        return dateBefore(curr);
+        return dateAfter(curr);
     }
 
     private Date getCurrentDate(){
@@ -130,7 +130,7 @@ public class Date {
     public boolean isOlderThan(int age){
         Date day = getCurrentDate();
         int newYear = day.getYear() - age;// TODO - kernel purity??
-        Date dayToCompare = new Date(Integer.toString(day.getMonth()), Integer.toString(day.getYear()), Integer.toString(newYear));
+        Date dayToCompare = new Date(Integer.toString(day.getMonth()), Integer.toString(day.getDay()), Integer.toString(newYear));
         return dateBefore(dayToCompare);
     }
 

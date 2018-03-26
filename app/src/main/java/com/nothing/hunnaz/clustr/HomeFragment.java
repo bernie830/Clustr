@@ -81,17 +81,20 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         int eventAgeCutoff = e.getAge();
 
         float distance = getLocation(e);
-
-        return (e.notYetOccurred() && userBirthday.isOlderThan(eventAgeCutoff) && (distance <= 25));
+        boolean notOccurred = e.notYetOccurred();
+        boolean oldEnough = userBirthday.isOlderThan(eventAgeCutoff);
+        boolean withinDist = true; //(distance <= 25);// TODO! - Need real distance
+        return (notOccurred && oldEnough && withinDist);
     }
 
     private void getUser(final String id, final ArrayList<Event> items){
 
-        mDatabase.child("users").orderByKey().equalTo(id).addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+        db.child("users").orderByKey().equalTo(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChildren()) { // TODO - Check here
-                    User retVal = dataSnapshot.getValue(User.class);
+                    User retVal = dataSnapshot.child(id).getValue(User.class);
 
                     int i = 0;
                     while(retVal != null && retVal.getBirthday() != null && i < items.size()){
