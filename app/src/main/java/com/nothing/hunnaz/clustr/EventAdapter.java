@@ -1,6 +1,7 @@
 package com.nothing.hunnaz.clustr;
 
 import android.content.Context;
+import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +22,15 @@ public class EventAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mInflater;
     private ArrayList<Event> mDataSource;
+    private Location mLocation;
 
 
     // Constructor
-    public EventAdapter(Context context, ArrayList<Event> items) {
+    public EventAdapter(Context context, ArrayList<Event> items, Location location) {
         mContext = context;
         mDataSource = items;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mLocation = location;
     }
 
     // Lets ListView know how many items to display.
@@ -72,16 +75,22 @@ public class EventAdapter extends BaseAdapter {
         // Fill Cost
         double eventCost = eventItem.getCost();
         String cost;
-        if(eventCost == 0){
+        if (eventCost == 0) {
             cost = "$FREE";
-        }else{
+        } else {
             NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
             cost = currencyFormatter.format(eventCost);
         }
         costTextView.setText(cost);
 
         // Fill Distance
-        String distance = "1.24" + "mi";// TODO - Fix to be dynamic
+//        String distance = "1.24" + "mi";// TODO - Fix to be dynamic
+        String distance = "N/A";
+        if (mLocation != null) {
+            float meters = mLocation.distanceTo(eventItem.getLocation(mContext));
+            float miles = meters * (float) 0.000621371;
+            distance = Float.toString(miles) + "mi";
+        }
         distanceTextView.setText(distance);
 
         // Picasso is a open-source library for async pic loading
