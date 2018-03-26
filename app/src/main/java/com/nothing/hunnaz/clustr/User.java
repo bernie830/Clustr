@@ -20,6 +20,14 @@ public class User {
         this.accountID = accountID;
     }
 
+    public void copyFrom(User user){
+        // TODO - Do these violate kernel purity?
+        this.birthday = user.getBirthday();
+        this.email = user.getEmail();
+        this.username = user.getUsername();
+        this.accountID = user.getAccountID();
+    }
+
     public User() {}
 
     // Getters and Setters
