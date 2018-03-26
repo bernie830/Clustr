@@ -41,9 +41,9 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener{
         View v = inflater.inflate(R.layout.fragment_welcome, container, false);
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
 
-        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
-            switchIntent(WelcomeActivity.class); // Change this to the landscape version
-        }
+//        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
+//            switchIntent(WelcomeActivity.class); // Change this to the landscape version
+//        }
 
         Button btnAdd = (Button) v.findViewById(R.id.loginButton);
         btnAdd.setOnClickListener(this);

@@ -46,9 +46,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         View v = inflater.inflate(R.layout.fragment_login, container, false);
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
 
-        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
-            switchIntent(LoginActivity.class); // Change this to the landscape version
-        }
+//        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
+//            switchIntent(LoginActivity.class); // Change this to the landscape version
+//        }
 
         // Firebase
         users = FirebaseDatabase.getInstance().getReference("users");

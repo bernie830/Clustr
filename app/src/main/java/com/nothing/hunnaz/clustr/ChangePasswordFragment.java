@@ -85,9 +85,9 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
         View v = inflater.inflate(R.layout.fragment_change_password, container, false);
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
 
-        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
-            switchIntent(ChangePasswordActivity.class); // Change this to the landscape version
-        }
+//        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
+//            switchIntent(ChangePasswordActivity.class); // Change this to the landscape version
+//        }
 
         loginInfoMessage = (TextView) v.findViewById(R.id.loginInfo);
         usernameTextEntry = (EditText) v.findViewById(R.id.userName);

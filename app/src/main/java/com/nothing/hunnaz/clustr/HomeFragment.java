@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -40,18 +41,23 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 
 
 /**
+ * Fragment of the Home Screen. Contains a list of all available events.
+ *
  * Created by Zane Clymer on 2/28/2018.
  */
 public class HomeFragment extends Fragment implements View.OnClickListener {
-    private DatabaseReference dbEvents;
     private FirebaseAuth mAuth;
     private Location CurrentLocation;
     private DrawerLayout mDrawerLayout;
     private FusedLocationProviderClient mLocation;
+    private DatabaseReference mDatabase;
 
     private ListView mListView;
 
@@ -63,6 +69,29 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Firebase
         mAuth = FirebaseAuth.getInstance();
+
+        // DB Instance
+        final ArrayList<Event> listItems = new ArrayList<Event>();
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("events");
+        mDatabase.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        //Get map of events in datasnapshot
+                        for(DataSnapshot child: dataSnapshot.getChildren()){
+                            Event singleEvent = child.getValue(Event.class);
+                            listItems.add(singleEvent);
+                        }
+
+//                        collectEvents((Map<String,Object>) dataSnapshot.getValue());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //handle databaseError
+                        // TODO - Fill out
+                    }
+                });
 
         // Location
         mLocation = LocationServices.getFusedLocationProviderClient(getActivity());
@@ -120,17 +149,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         mListView = (ListView) v.findViewById(R.id.event_list_view);
 
         // TODO - Get Events from Firebase
-        Time t = new Time(12,0);
-        Event event1 = new Event("Pants Party","248 East Patterson Ave",20,"11/11/18","I think you mean party in your pants.",1,18,"Zane Clymer", 18, t);
-        Event event2 = new Event("Leif Erikson Day ","114 Scotland Ave",500,"10/09/18","Go Vikings!",0,21,"Tim Dunkin", 347, t);
 
+//        Time t = new Time(12,0);
+//        Event event1 = new Event("Pants Party","248 East Patterson Ave",20,"11/11/18","I think you mean party in your pants.",1,18,"Zane Clymer", 18, t);
+//        Event event2 = new Event("Leif Erikson Day ","114 Scotland Ave",500,"10/09/18","Go Vikings!",0,21,"Tim Dunkin", 347, t);
 
-
-        final ArrayList<Event> listItems = new ArrayList<Event>();
-
-        listItems.add(event1);
-        listItems.add(event2);
-
+//        listItems.add(event1);
         EventAdapter adapter = new EventAdapter(this.getContext(), listItems);
         mListView.setAdapter(adapter);
 
@@ -144,6 +168,43 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         return v;
     }
+
+//    private void collectEvents(DataSnapshot childSnapshot) {
+//
+//
+//
+//        ArrayList<Event> listOfEvents = new ArrayList<Event>();
+//
+//        //iterate through each user, ignoring their UID
+//        for (Map.Entry<String, Object> entry : events.entrySet()){
+//
+//            //Get user map
+//            Map singleEvent = (Map) entry.getValue();
+//            String title = (String) singleEvent.get("title");
+//            String location = (String) singleEvent.get("location");
+//            int capacity = (int) singleEvent.get("capacity");
+//            String date = (String) singleEvent.get("date");
+//            String description = (String) singleEvent.get("description");
+//            double cost = (double) singleEvent.get("cost");
+//            int age = (int) singleEvent.get("age");
+//            String creatorId = (String) singleEvent.get("creatorId");
+//            int numCurrentAttending = (int) singleEvent.get("numCurrentAttending");
+//            Time time = (Time) singleEvent.get("time");
+//
+//            Event newEvent = new Event((String) singleEvent.get("title"),
+//                    (String) singleEvent.get("location"),
+//                    (int) singleEvent.get("capacity"),
+//                    (String) singleEvent.get("date"),
+//                    (String) singleEvent.get("description"),
+//                    (double) singleEvent.get("cost"),
+//                    (int) singleEvent.get("age"),
+//                    (String) singleEvent.get("creatorId"),
+//                    (int) singleEvent.get("numCurrentAttending"),
+//                    (Time) singleEvent.get("time"));
+//            // Get phone field and append to list
+//            listOfEvents.add(newEvent);
+//        }
+//    }
 
     private void getLocation() {
         if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)

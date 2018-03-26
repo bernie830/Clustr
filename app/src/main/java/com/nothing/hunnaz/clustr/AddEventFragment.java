@@ -204,9 +204,9 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         View v = inflater.inflate(R.layout.fragment_add_event, container, false);
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
 
-        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
-            switchIntent(ChangePasswordActivity.class); // Change this to the landscape version
-        }
+//        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
+//            switchIntent(ChangePasswordActivity.class); // Change this to the landscape version
+//        }
 
         // Initialize auth and database
         mAuth = FirebaseAuth.getInstance();
