@@ -94,7 +94,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     User retVal = dataSnapshot.getValue(User.class);
 
                     int i = 0;
-                    while(retVal != null retVal.getBirthday() != null && i < items.size()){
+                    while(retVal != null && retVal.getBirthday() != null && i < items.size()){
                         Event e = items.get(i);
                         if(eventValid(e, retVal)){
                             i++;
