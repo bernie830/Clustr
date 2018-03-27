@@ -81,7 +81,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Goog
         float distance = getLocation(e);
         boolean notOccurred = e.notYetOccurred();
         boolean oldEnough = userBirthday.isOlderThan(eventAgeCutoff);
-        boolean withinDist = true; //(distance <= 25);// TODO! - Need real distance
+        boolean withinDist = (distance <= 25);
         return (notOccurred && oldEnough && withinDist);
     }
 
