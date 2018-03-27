@@ -3,7 +3,9 @@ package com.nothing.hunnaz.clustr;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,27 +13,58 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 /**
  *
  */
 public class ChangePasswordFragment extends Fragment implements View.OnClickListener {
-    private EditText usernameTextEntry;
+    private EditText emailTextEntry;
     private EditText passwordTextEntry;
     private EditText newPassTextEntry;
     private EditText confirmPassTextEntry;
     private TextView loginInfoMessage;
-
-    private boolean confirmOldInformation(String username, String pass){
-//        UserSingleton singleton = UserSingleton.get(this.getContext());
-//        boolean validLogin = singleton.isValidLogin(username, pass);
-//        return validLogin;
-        return true;
-    }
+    private String TAG = "Change password";
 
     // TODO - Does nothing right now
-    private void saveNewPassword(String username, String newPass){
-//        UserSingleton singleton = UserSingleton.get(this.getContext());
-//        singleton.changePassword(username, newPass);
+    private void saveNewPassword(String email, final String oldPass, final String newPass){
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+// Get auth credentials from the user for re-authentication. The example below shows
+// email and password credentials but there are multiple possible providers,
+// such as GoogleAuthProvider or FacebookAuthProvider.
+        AuthCredential credential = EmailAuthProvider
+                .getCredential(email, oldPass);
+
+// Prompt the user to re-provide their sign-in credentials
+        user.reauthenticate(credential)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            user.updatePassword(newPass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "Password updated");
+                                    } else {
+                                        Log.d(TAG, "Error password not updated");
+                                        loginInfoMessage.setText("Attempted change failed. Please check your username and old password");
+                                    }
+                                    switchIntent(AccountActivity.class);
+                                }
+                            });
+                        } else {
+                            Log.d(TAG, "Error auth failed");
+                            loginInfoMessage.setText("Attempted change failed. Please check your username and old password");
+                        }
+                    }
+                });
     }
 
     private void switchIntent(Class name){
@@ -43,26 +76,21 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.doneButton:
-                String username = usernameTextEntry.getText().toString();
+                String email = emailTextEntry.getText().toString();
                 String oldPass = passwordTextEntry.getText().toString();
                 String newPass = newPassTextEntry.getText().toString();
                 String confirmPass = confirmPassTextEntry.getText().toString();
                 String error = "";
-                boolean validLogin = confirmOldInformation(username, oldPass);
-                if(validLogin && !newPass.equals(confirmPass)){
+                if(!newPass.equals(confirmPass)){
                     error = "The entered passwords do not match";
-                } else if (validLogin && newPass.length() < 8) {
+                } else if (newPass.length() < 8) {
                     error = "The new passwords must be at least 8 characters in length";
-                }
-                if(!validLogin && error.length() == 0){
-                    error = "The old login information was incorrect or could not be found";
                 }
 
                 if(error.length() != 0){
                     loginInfoMessage.setText(error);
                 } else {
-                    saveNewPassword(username, newPass);
-                    switchIntent(AccountActivity.class);
+                    saveNewPassword(email, oldPass, newPass);
                 }
                 break;
             case R.id.backButton:
@@ -89,7 +117,7 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
 //        }
 
         loginInfoMessage = (TextView) v.findViewById(R.id.loginInfo);
-        usernameTextEntry = (EditText) v.findViewById(R.id.userName);
+        emailTextEntry = (EditText) v.findViewById(R.id.email);
         passwordTextEntry = (EditText) v.findViewById(R.id.password);
         newPassTextEntry = (EditText) v.findViewById(R.id.newPassword);
         confirmPassTextEntry = (EditText) v.findViewById(R.id.newPasswordConfirm);

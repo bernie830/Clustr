@@ -72,11 +72,11 @@ public class Date {
 
     private boolean dateAfter(Date day){
         boolean returnVal = false;
-        if(day.getYear() < this.year){
+        if(day.getYear() <= this.year){
             returnVal = true;
-        } else if(day.getYear() == this.year && day.getMonth() < this.month){
+        } else if(day.getYear() == this.year && day.getMonth() <= this.month){
             returnVal = true;
-        } else if(day.getYear() == this.year && day.getMonth() == this.month && day.getDay() < this.day){
+        } else if(day.getYear() == this.year && day.getMonth() == this.month && day.getDay() <= this.day){
             returnVal = true;
         }
         return returnVal;
