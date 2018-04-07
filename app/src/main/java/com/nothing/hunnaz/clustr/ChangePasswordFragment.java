@@ -2,6 +2,9 @@ package com.nothing.hunnaz.clustr;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -72,6 +75,13 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
         startActivity(myIntent);
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -81,14 +91,18 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
                 String newPass = newPassTextEntry.getText().toString();
                 String confirmPass = confirmPassTextEntry.getText().toString();
                 String error = "";
-                if(!newPass.equals(confirmPass)){
+                if(!isNetworkAvailable()){
+                    error = "No network connection found. Internet connection is needed to change passwords";
+                }
+                if(error.length() == 0 && !newPass.equals(confirmPass)){
                     error = "The entered passwords do not match";
-                } else if (newPass.length() < 8) {
+                } else if (error.length() == 0 && newPass.length() < 8) {
                     error = "The new passwords must be at least 8 characters in length";
                 }
 
                 if(error.length() != 0){
                     loginInfoMessage.setText(error);
+                    loginInfoMessage.setTextColor(Color.RED);
                 } else {
                     saveNewPassword(email, oldPass, newPass);
                 }

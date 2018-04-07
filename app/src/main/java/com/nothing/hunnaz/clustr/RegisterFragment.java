@@ -3,6 +3,8 @@ package com.nothing.hunnaz.clustr;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -201,6 +203,13 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         startActivity(myIntent);
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
     @Override
     public void onClick(View view) {
         ViewGroup v = (ViewGroup) view.getParent().getParent();
@@ -215,7 +224,10 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.doneRegisterButton:
                 Log.d(TAG, "Register Button pressed");
-                String error = registerUser();
+                String error = "Internet connection is required to register a user.";
+                if(isNetworkAvailable()){
+                    error = registerUser();
+                }
                 Log.d(TAG, error);
                 if(error.length() > 0){
                     errorMessageText.setText(error);

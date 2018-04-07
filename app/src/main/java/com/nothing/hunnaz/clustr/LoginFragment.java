@@ -2,6 +2,9 @@ package com.nothing.hunnaz.clustr;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -58,12 +61,27 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         v.findViewById(R.id.doneButton).setOnClickListener(this);
         v.findViewById(R.id.registerButton).setOnClickListener(this);
 
+        informationText = (TextView) v.findViewById(R.id.loginInfo);
+        informationText.setTextColor(Color.GRAY);
+
         return v;
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     // Return an error message if there is one
     private void attemptLogin(String username, String password){
-        getUserEmailFromUsername(username, password);
+        newInfo = "";
+        if(isNetworkAvailable()){
+            getUserEmailFromUsername(username, password);
+        } else {
+            newInfo = "Internet connection is required to log in.";
+        }
     }
 
     private void getUserEmailFromUsername(final String username, final String password) {
@@ -86,21 +104,21 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
 
     private void logIn(String email, String password) {
         Log.d(TAG, "log in: " + email);
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithEmail: success");
-                    switchIntent(HomeActivity.class);
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.d(TAG, "signInWithEmail: failure", task.getException());
-                    Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                    newInfo = "Login failed.";
+            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "signInWithEmail: success");
+                        switchIntent(HomeActivity.class);
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.d(TAG, "signInWithEmail: failure", task.getException());
+                        Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        newInfo = "Login failed.";
+                    }
                 }
-            }
-        });
+            });
     }
 
     private void switchIntent(Class name){
@@ -129,9 +147,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
 
         switch (view.getId()) {
             case R.id.doneButton:
+                informationText.setText("Attempting Login...");
+                informationText.setTextColor(Color.GRAY);
                 attemptLogin(usernameTextEntry.getText().toString(), passwordTextEntry.getText().toString());
                 if(newInfo.length() != 0) {
                     informationText.setText(newInfo);
+                    informationText.setTextColor(Color.RED);
                 }
                 break;
             case R.id.registerButton:

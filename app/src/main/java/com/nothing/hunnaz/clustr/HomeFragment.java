@@ -1,12 +1,17 @@
 package com.nothing.hunnaz.clustr;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -24,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -32,6 +38,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -43,6 +51,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 
 /**
@@ -57,11 +66,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Goog
     private FusedLocationProviderClient mLocation;
     private DatabaseReference mDatabase;
     private FirebaseUser currentFirebaseUser;
+    private ProgressDialog dialog;
 
     private ListView mListView;
 
+    private boolean hasData = false;
+
     private final String TAG = "HomeFragment";
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+
+    private Handler handler;
+    private boolean done = false;
+    private final int LOADING_TIMEOUT_TIME = 90000; // Timeout time in milliseconds 90 seconds
 
 
     private float getLocation(Event e){
@@ -87,7 +103,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Goog
 
     private void filterMore(User user, final ArrayList<Event> items){
         int i = 0;
-        Context con = this.getContext();
+        final Context con = this.getContext();
         while(user != null && user.getBirthday() != null && i < items.size()){
             Event e = items.get(i);
             if(eventValid(e, user)){
@@ -97,16 +113,29 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Goog
             }
         }
 
-        EventAdapter adapter = new EventAdapter(con, items, CurrentLocation);
-        mListView.setAdapter(adapter);
 
-        // Gives items onClickListeners
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showItem(items.get(position));
-            }
-        });
+        try{
+            this.getActivity().runOnUiThread(new Runnable(){
+                @Override
+                public void run() {
+                    EventAdapter adapter = new EventAdapter(con, items, CurrentLocation);
+                    mListView.setAdapter(adapter);
+
+                    // Gives items onClickListeners
+                    mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            showItem(items.get(position));
+                        }
+                    });
+                    dialog.dismiss();
+                    done = true;
+                }
+            });
+        }
+        catch(Exception e) {
+        }
+
     }
 
     private void filterEvents(final String id, final ArrayList<Event> items){
@@ -115,14 +144,24 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Goog
         db.child("users").orderByKey().equalTo(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 if(dataSnapshot.hasChildren()) { // TODO - Check here
-                    User user = dataSnapshot.child(id).getValue(User.class);
-                    getCurrentLocation(user, items);
+                    final User user = dataSnapshot.child(id).getValue(User.class);
+                    Thread t = new Thread()
+                    {
+                        public void run()
+                        {
+                            getCurrentLocation(user, items);
+                        }
+                    };
+                    t.start();
                 }
+
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {}
+
         });
     }
 
@@ -232,7 +271,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Goog
                         if (location != null) {
                             CurrentLocation = location;
                             Log.d(TAG, "Current Location\n" + location.toString());
-                            filterMore(user, list);
+                            final Thread t = new Thread()
+                            {
+                                public void run()
+                                {
+                                    filterMore(user, list);
+                                }
+                            };
+                            t.start();
                         }
                     }
                 }).addOnFailureListener(getActivity(), new OnFailureListener() {
@@ -287,7 +333,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Goog
         FragmentTransaction transaction = manager.beginTransaction().add(this.getId(), itemFragment);
         transaction.addToBackStack("added");
         transaction.commit();
-
     }
 
     @Override
@@ -308,6 +353,57 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Goog
 
     @Override
     public void onConnected(Bundle bundle) {
+        dialog = new ProgressDialog(getActivity());
+
+        dialog.setMessage("Finding events in your area. This may take some time.");
+        dialog.setIndeterminate(true);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+
+        final Thread t = new Thread()
+        {
+            public void run()
+            {
+                getData();
+            }
+        };
+        t.start();
+
+        final Context con = this.getContext();
+        final Activity act = this.getActivity();
+
+        Thread t1 = new Thread()
+        {
+            public void run()
+            {
+                try {
+                    Thread.sleep(LOADING_TIMEOUT_TIME);
+                } catch (Exception e){
+
+                }
+                if(!done){
+                    t.interrupt();
+                    dialog.dismiss();
+                    try{
+                        act.runOnUiThread(new Runnable(){
+                            @Override
+                            public void run() {
+                                Toast.makeText(con, "Error gathering data. Please make sure you have a network connection and your GPS location enabled.", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                    catch(Exception e) {
+                    }
+
+                }
+            }
+        };
+        t1.start();
+    }
+
+    public void getData() {
+
+
         final Context con = this.getContext();
         // DB Instance
         final ArrayList<Event> listItems = new ArrayList<Event>();
@@ -317,11 +413,20 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Goog
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+
                         //Get map of events in datasnapshot
                         for(DataSnapshot child: dataSnapshot.getChildren()){
                             listItems.add(child.getValue(Event.class));
                         }
-                        filterEvents(currentFirebaseUser.getUid(), listItems);
+                        final Thread t = new Thread()
+                        {
+                            public void run()
+                            {
+                                filterEvents(currentFirebaseUser.getUid(), listItems);
+                            }
+                        };
+                        t.start();
+
                     }
 
                     @Override

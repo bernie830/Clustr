@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -129,6 +131,12 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         }
         return retVal;    }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
     @Override
     public void onClick(View view) {
@@ -144,7 +152,13 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                 String dateStr = date.getText().toString();
                 String capacityStr = capacity.getText().toString();
                 String addressStr = address.getText().toString();
-                String errorMessage = validateName(nameStr);
+                String errorMessage = "";
+                if(!isNetworkAvailable()){
+                    errorMessage = "ERROR: A network connection is required to add an event.";
+                }
+                if(errorMessage.length() == 0){
+                    errorMessage = validateName(nameStr);
+                }
                 int hour = 0;
                 int minute = 0;
                 if (Build.VERSION.SDK_INT >= 23 ) {

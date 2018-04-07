@@ -1,7 +1,10 @@
 package com.nothing.hunnaz.clustr;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -12,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -153,6 +157,14 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         }
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+
 
     @Override
     public void onClick(View view) {
@@ -163,13 +175,17 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
                 closeFragment();
                 break;
             case R.id.rsvpButton:
-                Button b = (Button) view;
-                if(!b.getText().equals("Already RSVP'd! Decline?")) {
-                    addUserToGuestList(currUser, v);
-                    b.setText("Already RSVP'd! Decline?");
+                if(isNetworkAvailable()) {
+                    Button b = (Button) view;
+                    if (!b.getText().equals("Already RSVP'd! Decline?")) {
+                        addUserToGuestList(currUser, v);
+                        b.setText("Already RSVP'd! Decline?");
+                    } else {
+                        removeUserFromGuestList(currUser, v);
+                        b.setText("RSVP");
+                    }
                 } else {
-                    removeUserFromGuestList(currUser, v);
-                    b.setText("RSVP");
+                    Toast.makeText(this.getContext(), "Unable to change RSVP status. Please make sure you have network connection.",Toast.LENGTH_LONG).show();
                 }
         }
     }
