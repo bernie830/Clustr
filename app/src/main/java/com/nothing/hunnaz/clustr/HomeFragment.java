@@ -90,12 +90,19 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Goog
         return retVal;
     }
 
+    private void removeFromDB(Event e){
+        mDatabase.child(e.getKey()).removeValue();
+    }
+
     private boolean eventValid(Event e, User user) {
         Date userBirthday = new Date(user.getBirthday());
         int eventAgeCutoff = e.getAge();
 
         float distance = getLocation(e);
         boolean notOccurred = e.notYetOccurred();
+        if(!notOccurred){
+            removeFromDB(e);
+        }
         boolean oldEnough = userBirthday.isOlderThan(eventAgeCutoff);
         boolean withinDist = (distance <= 25);
         return (notOccurred && oldEnough && withinDist);
