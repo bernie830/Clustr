@@ -1,16 +1,32 @@
 package com.nothing.hunnaz.clustr;
 
-import android.support.v4.app.Fragment;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 
-public class WelcomeActivity extends SingleFragmentActivity{
+public class WelcomeActivity extends AppCompatActivity {
 
     @Override
-    protected Fragment createFragment() {
-        Fragment retVal = new WelcomeFragment();
-        int rotation = this.getWindowManager().getDefaultDisplay().getRotation();
-//        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
-//            retVal =  new WelcomeFragment(); // Change this to the landscape version
-//        }
-        return retVal;
+    protected void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_welcome);
+
+        final Button button = findViewById(R.id.loginButton);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                switch (v.getId()) {
+                    case R.id.loginButton:
+                        switchIntent(LoginActivity.class);
+                        break;
+                }
+            }
+        });
+    }
+
+    private void switchIntent(Class name){
+        Intent myIntent = new Intent(this, name);
+        startActivity(myIntent);
     }
 }
